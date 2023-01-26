@@ -110,6 +110,7 @@ EDA and statistics
 ```{r}
 
 hist(merged_numeric$driver_age)
+## this is a hsitogram
 
 ```
 
