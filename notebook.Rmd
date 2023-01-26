@@ -1,0 +1,151 @@
+
+
+
+
+```{r}
+head(results)
+```
+
+```{r}
+head(driver_standings)
+```
+
+
+```{r}
+head(drivers)
+```
+
+
+```{r}
+head(constructor_standings)
+```
+
+
+```{r}
+head(constructors)
+```
+
+
+```{r}
+head(qualifying)
+```
+Dropping uwnanted columns from results
+```{r}
+results = results[-c(12:15)]
+colnames(results)[7] = 'finalposition'
+```
+
+Merging status in results
+```{r}
+df.results.merged = merge(results, status, by = c('statusId'))
+df.results.merged = df.results.merged %>% relocate(statusId, .after = last_col())
+```
+
+Merging df results and drivers.
+```{r}
+#pasting forename and surname in a new column 'fullname' in drivers df
+drivers$fullname = paste(drivers$forename, drivers$surname)
+names(drivers$nationality) = 'driv_nationality'
+drivers_copy = drivers_copy[-c(3, 4, 9)]
+
+
+#merging
+df.results.merged = merge(df.results.merged, drivers_copy, by = c('driverId'))
+
+```
+
+Merging races with df.results.merged
+```{r}
+races_copy = races[, c(1,3:6)]
+df.results.merged = merge(df.results.merged, races_copy, by = c('raceId'))
+
+```
+
+Merging new df results and constructors.
+```{r}
+constructors_copy = constructors[, c(1,3)]
+colnames(df.results.merged)[22] = 'const_name'
+
+df.results.merged = merge(df.results.merged, constructors_copy, by = 'constructorId')
+df.results.merged = df.results.merged[,-c(20)]
+
+```
+
+
+Merging circuits with df results.
+```{r}
+circuits_copy = circuits[, c(1,3)]
+
+df.results.merged = merge(df.results.merged, circuits_copy, by = c('circuitId'))
+```
+
+Merging constructor standings with df.result for importing constructor wins and points
+```{r}
+const_standing_copy = constructor_standings[, c(2,3,4,7)]
+colnames(const_standing_copy)[c(3:4)] = c('const_points', 'const_wins')
+
+df.results.merged = merge(df.results.merged, const_standing_copy, by = c('raceId', 'constructorId'))
+```
+
+
+```{r}
+#Calculating drivers age and adding a relative column to the dataset
+df.results.merged$driver_age = as.integer(format(df.results.merged$date, format="%Y"))- as.integer(format(df.results.merged$dob, format="%Y"))
+
+```
+
+PROCESSING some data columns. 
+```{r}
+#casting fastestLapSpeed to numeric
+df.results.merged$fastestLapSpeed = as.numeric(df.results.merged$fastestLapSpeed)
+
+#substitute NA's in fastestSpeed with 0.
+df.results.merged$fastestLapSpeed[is.na(df.results.merged$fastestLapSpeed)] <- 0
+
+
+```
+
+
+EDA and statistics
+```{r}
+
+hist(merged_numeric$driver_age)
+
+```
+
+
+```{r}
+#barplot for collisions
+par(mar=c(3, 7, 2, 1))
+
+#barplot showing number of collisions for each circuit
+barplot(
+  table(df.results.merged[df.results.merged$status == 'Collision', 'name']), 
+  horiz = TRUE, 
+  las=1, 
+  cex.names=0.4
+  )
+```
+
+
+```{r}
+#get circuit names for which there was a collision
+accident_names = names(table(df.results.merged[df.results.merged$status == 'Accident', 'name']))
+
+#barplot showing accident ratio (n^Accident/n^races per circuit)
+
+par(mar=c(3, 20, 2, 1))
+barplot(
+  (table(df.results.merged[df.results.merged$status == 'Accident', 'name']))/(table(df.results.merged[, 'name'])[accident_names]),
+  horiz = TRUE, 
+  las=1, 
+  cex.names=0.4
+  )
+
+```
+
+
+```{r}
+
+```
+
