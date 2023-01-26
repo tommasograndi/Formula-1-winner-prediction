@@ -45,7 +45,7 @@ ggplot(df_year_winner, aes(x = X1, y = X5)) +
 #convert fastest lap time in number of milliseconds 
 df.results.merged$fastestLap_ms = as.numeric(lubridate::ms(as.character(df.results.merged$fastestLapTime)))*1000
 df.results.merged$fastestLap_ms[is.na(df.results.merged$fastestLap_ms)] <- 0
-df.results.merged = df.results.merged[, -c(11)]  #dropping column for 
+df.results.merged = df.results.merged[, -c(11)]  #dropping column for test ric
 
 
 
