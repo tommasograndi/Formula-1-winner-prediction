@@ -1,18 +1,16 @@
-#creating df with only numerical features
-merged_numeric = df.results.merged[, c(1:6,7,8,9,10,12,19,23,24,25)]
-
-# adding 0s when there is /N
 
 
-# boxplot for every attribute
+#CORRELATION MATRIX for numerical features //
+corr_matrix = cor(df.results.merged[c(7,8,9,10,11,16,20,21,22,23)])
+corrplot(corr_matrix)
+
+#convert fastest lap time in number of milliseconds //
+df.results.merged$fastestLap_ms = as.numeric(lubridate::ms(as.character(df.results.merged$fastestLapTime)))*1000
+df.results.merged$fastestLap_ms[is.na(df.results.merged$fastestLap_ms)] <- 0
+df.results.merged = df.results.merged[, -c(11)]  #dropping column of old fastestLapTime 
 
 
-#CORRELATION MATRIX for numerical features
-cm_numeric = cor(merged_numeric[c(7:15)])
-corrplot(cm_numeric)
-
-
-#create dataframe for driver points
+#create dataframe for driver points 
 df_points = merge(driver_standings, races[, c(1,2)], by = 'raceId') #merging races info
 df_points = merge(df_points, df[, c(1, 3, 17, 24)], by = c('raceId', 'driverId')) 
 
@@ -34,7 +32,8 @@ winner_Age = function(){
 df_year_winner = winner_Age()
 df_year_winner
 
-#plot for winners age during time
+
+#plot for winners age during time //
 ggplot(df_year_winner, aes(x = X1, y = X5)) + 
   labs(x = 'Years', y = 'Age') +
   ggtitle('Winning driver age for every year') +
@@ -45,10 +44,7 @@ ggplot(df_year_winner, aes(x = X1, y = X5)) +
 
 
   
-#convert fastest lap time in number of milliseconds 
-df.results.merged$fastestLap_ms = as.numeric(lubridate::ms(as.character(df.results.merged$fastestLapTime)))*1000
-df.results.merged$fastestLap_ms[is.na(df.results.merged$fastestLap_ms)] <- 0
-df.results.merged = df.results.merged[, -c(11)]  #dropping column for test 
+
 
 
 
