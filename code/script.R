@@ -1,10 +1,8 @@
 #creating df with only numerical features
 merged_numeric = df.results.merged[, c(1:6,7,8,9,10,12,19,23,24,25)]
 
-# adding 0s when there is /N
-
-
-# boxplot for every attribute
+# adding 0s when there is NA in fastestLapSpeed
+df["fastestLapSpeed"][is.na(df["fastestLapSpeed"])] <- 0
 
 
 #CORRELATION MATRIX for numerical features
@@ -46,9 +44,9 @@ ggplot(df_year_winner, aes(x = X1, y = X5)) +
 
   
 #convert fastest lap time in number of milliseconds 
-df.results.merged$fastestLap_ms = as.numeric(lubridate::ms(as.character(df.results.merged$fastestLapTime)))*1000
-df.results.merged$fastestLap_ms[is.na(df.results.merged$fastestLap_ms)] <- 0
-df.results.merged = df.results.merged[, -c(11)]  #dropping column for test 
+df$fastestLap_ms = as.numeric(lubridate::ms(as.character(df$fastestLapTime)))*1000
+df$fastestLap_ms[is.na(df$fastestLap_ms)] <- 0
+df = df[, -c(11)]  #dropping column
 
 
 
