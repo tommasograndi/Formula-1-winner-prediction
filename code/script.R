@@ -36,9 +36,12 @@ df_year_winner
 
 #plot for winners age during time
 ggplot(df_year_winner, aes(x = X1, y = X5)) + 
+  labs(x = 'Years', y = 'Age') +
+  ggtitle('Winning driver age for every year') +
   geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  geom_abline(slope = 0, intercept = mean(df_year_winner$X5), color = 'red', size = 1.5)
+  geom_abline(slope = 0, intercept = mean(df_year_winner$X5), color = 'red', size = 1.5) + theme_bw() + 
+  geom_text(aes(label = X5), vjust = -1, size=5)
 
 
   
