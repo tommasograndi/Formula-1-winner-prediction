@@ -1,11 +1,11 @@
-
-
-
-
-
-
 #creating df with only numerical features
 merged_numeric = df.results.merged[, c(1:6,7,8,9,10,12,19,23,24,25)]
+
+# adding 0s when there is /N
+
+
+# boxplot for every attribute
+
 
 #CORRELATION MATRIX for numerical features
 cm_numeric = cor(merged_numeric[c(7:15)])
@@ -14,7 +14,7 @@ corrplot(cm_numeric)
 
 #create dataframe for driver points
 df_points = merge(driver_standings, races[, c(1,2)], by = 'raceId') #merging races info
-df_points = merge(df_points, df.results.merged[, c(1, 4, 16, 23)], by = c('raceId', 'driverId')) 
+df_points = merge(df_points, df[, c(1, 3, 17, 24)], by = c('raceId', 'driverId')) 
 
 #Writing a function fo find winner of F1 for each year (extracting age, points, name, driveId)
 winner_Age = function(){
