@@ -134,6 +134,14 @@ hist(merged_numeric$driver_age, main = paste("Histogram of driver age"))
 boxplot(df.results.merged[22], horizontal = TRUE, notch = TRUE, xlab = "DRIVERS' AGE")
 ```
 
+```{r}
+hist(subset(df$fastestLapSpeed, df$fastestLapSpeed > 100), main = 'Histogram for fastest speed in a lap', breaks = 20, xlab = "SPEED")
+```
+```{r}
+nationality = data.frame(table(df$driv_nationality))
+nationality$Var1 = as.character(nationality$Var1)
+treemap(nationality, index = 'Var1', vSize = 'Freq')
+```
 
 
 ```{r}
@@ -191,6 +199,7 @@ df_year_winner = winner_Age()
 df_year_winner
 ```
 
+Winning driver age overtime
 ```{r}
 #plot for winner's age over time
 ggplot(df_year_winner, aes(x = X1, y = X5)) + 
@@ -198,9 +207,18 @@ ggplot(df_year_winner, aes(x = X1, y = X5)) +
   ggtitle('Winning driver age for every year') +
   geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  geom_abline(slope = 0, intercept = mean(df_year_winner$X5), color = 'red', size = 1.5) + theme_bw() + 
-  geom_text(aes(label = X5), vjust = -1, size=5)
+  geom_abline(slope = 0, intercept = mean(df_year_winner$X5), color = 'red', size = 1.5)  
 ```
+
+How important is the pole position in each circuit to win the race?
+```{r}
+ggplot(pole_ratio, aes(x = X1, y = X2)) + 
+  labs(x = 'Circuit', y = 'Ratio') +
+  ggtitle('How important is the pole position') +
+  geom_bar(stat = "identity") + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
 
 CORRELATION
 ```{r}

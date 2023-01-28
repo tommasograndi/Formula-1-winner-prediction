@@ -6,8 +6,8 @@ df["fastestLapSpeed"][is.na(df["fastestLapSpeed"])] <- 0
 
 
 #CORRELATION MATRIX for numerical features
-cm_numeric = cor(merged_numeric[c(7:15)])
-corrplot(cm_numeric)
+corr_matrix = cor(df.results.merged[c(7,8,9,10,11,16,20,21,22,23)])
+corrplot(corr_matrix)
 
 
 #create dataframe for driver points
@@ -45,27 +45,29 @@ ggplot(df_year_winner, aes(x = X1, y = X5)) +
 #convert fastest lap time in number of milliseconds 
 df$fastestLap_ms = as.numeric(lubridate::ms(as.character(df$fastestLapTime)))*1000
 df$fastestLap_ms[is.na(df$fastestLap_ms)] <- 0
-df = df[, -c(11)]  #dropping column
+
 
 # how important is the pole position (ratio between how many times a racer qualified first win the race)
 df_pole <- merge(df, qualifying[, c(2:4, 6)], by = c('raceId', 'driverId', 'constructorId'))
+colnames(df_pole)[25] = 'qual_position' #renaming column position in qual_position
 df_pole <- subset(df_pole, qual_position == 1)
 pole_ratio <- matrix(ncol = 2)
-for (i in circuits) {
+circuits_list = circuits$name #assign circuits names to a list
+for (i in circuits_list) {
   df_temp <- subset(df_pole, df_pole$name == i)
   pole_ratio <- rbind(pole_ratio, c(i, nrow(subset(df_temp, df_temp$positionOrder == 1))/nrow(df_temp)))
 }
 pole_ratio = data.frame(pole_ratio)
 pole_ratio = pole_ratio[-1,]
+pole_ratio$X2 = as.numeric(pole_ratio$X2)
 pole_ratio <- na.omit(pole_ratio)
 pole_ratio <- subset(pole_ratio, X2 != 0)
 
 ggplot(pole_ratio, aes(x = X1, y = X2)) + 
-  labs(x = 'Years', y = 'Age') +
+  labs(x = 'Circuit', y = 'Ratio') +
   ggtitle('How important is the pole position') +
   geom_bar(stat = "identity") + 
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  geom_text(aes(label = X2), vjust = -1, size=3)
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 
 
