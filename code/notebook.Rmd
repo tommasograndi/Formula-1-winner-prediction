@@ -1,5 +1,11 @@
 # Formula 1 winner prediction.
 
+# Loading libraries
+
+```{r}
+library(ggplot2)
+```
+
 ### DATA CLEANING AND PROCESSING
 
 ```{r}
@@ -63,7 +69,6 @@ drivers_copy = drivers_copy[-c(3, 4, 9)]  #creating with only columns to be merg
 
 #merging
 df.results.merged = merge(df.results.merged, drivers_copy, by = c('driverId'))
-
 ```
 
 Merging races with df.results.merged
@@ -71,7 +76,6 @@ Merging races with df.results.merged
 ```{r}
 races_copy = races[, c(1,3:6)]
 df.results.merged = merge(df.results.merged, races_copy, by = c('raceId'))
-
 ```
 
 Merging constructors with df results
@@ -82,7 +86,6 @@ colnames(df.results.merged)[22] = 'const_name'
 
 df.results.merged = merge(df.results.merged, constructors_copy, by = 'constructorId')
 df.results.merged = df.results.merged[,-c(20)]
-
 ```
 
 Merging circuits with df results.
@@ -118,8 +121,6 @@ df.results.merged$driver_age = as.integer(format(df.results.merged$date, format=
 df.results.merged$fastestLap_ms = as.numeric(lubridate::ms(as.character(df.results.merged$fastestLapTime)))*1000
 df.results.merged$fastestLap_ms[is.na(df.results.merged$fastestLap_ms)] <- 0
 df.results.merged = df.results.merged[, -c(11)]  #dropping column of old fastestLapTime 
-
-
 ```
 
 ### EDA and plots.
@@ -141,7 +142,7 @@ ggplot(df, aes(x=driver_age)) +
 
 ```{r}
 ggplot(subset(df, df$fastestLapSpeed > 100), aes(x=fastestLapSpeed)) + 
- geom_histogram(aes(y=..density..), colour="black", fill= '#076fa2')+
+ geom_histogram(aes(y=after_stat(density)), colour="black", fill= '#076fa2')+
  geom_density(alpha=.2, fill="#FF6666") +
  labs(title = 'Histogram for fastest speed in a lap', x = 'Speed')
 ```
@@ -154,20 +155,11 @@ treemap(nationality, index = 'Var1', vSize = 'Freq')
 ```
 
 ```{r}
-#par(mar=c(3, 7, 0, 0))
-#barplot(
-  #table(df.results.merged$name),
-  #horiz = TRUE, 
-  #las=1, 
-  #cex.names=0.4
-  #)
-
 ggplot(df, aes(name)) + 
   labs(x = 'Circuits') +
   ggtitle('Circuits Frequency') +
   geom_bar(fill="#076fa2") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  coord_flip()
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
 
 Number of collisions for each circuit.
@@ -182,7 +174,7 @@ barplot(
   horiz = TRUE, 
   las=1, 
   cex.names=0.4
-  )
+)
 ```
 
 Accident ratio for each circuit.
