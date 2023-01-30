@@ -33,13 +33,14 @@ df_year_winner = winner_Age()
 df_year_winner
 
 #plot for winners age during time
-ggplot(df_year_winner, aes(x = X1, y = X5)) + 
+names(df_year_winner) = c('year', 'driverId', 'final_points', 'fullname', 'age')
+ggplot(df_year_winner, aes(x = year, y = age)) + 
   labs(x = 'Years', y = 'Age') +
   ggtitle('Winning driver age for every year') +
   geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  geom_abline(slope = 0, intercept = mean(df_year_winner$X5), color = 'red', size = 1.5) + theme_bw() + 
-  geom_text(aes(label = X5), vjust = -1, size=5)
+  geom_abline(slope = 0, intercept = mean(df_year_winner$year), color = 'red', size = 1.5) + theme_bw() + 
+  geom_text(aes(label = year), vjust = -1, size=5)
 
   
 #convert fastest lap time in number of milliseconds 
@@ -47,7 +48,7 @@ df$fastestLap_ms = as.numeric(lubridate::ms(as.character(df$fastestLapTime)))*10
 df$fastestLap_ms[is.na(df$fastestLap_ms)] <- 0
 
 
-# how important is the pole position (ratio between how many times a racer qualified first win the race)
+# how important is the pole position (ratio between how many times a racer qualified first and win the race)
 df_pole <- merge(df, qualifying[, c(2:4, 6)], by = c('raceId', 'driverId', 'constructorId'))
 colnames(df_pole)[25] = 'qual_position' #renaming column position in qual_position
 df_pole <- subset(df_pole, qual_position == 1)

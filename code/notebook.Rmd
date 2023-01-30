@@ -154,19 +154,20 @@ treemap(nationality, index = 'Var1', vSize = 'Freq')
 ```
 
 ```{r}
-par(mar=c(3, 7, 0, 0))
-barplot(
-  table(df.results.merged$name),
-  horiz = TRUE, 
-  las=1, 
-  cex.names=0.4
-  )
+#par(mar=c(3, 7, 0, 0))
+#barplot(
+  #table(df.results.merged$name),
+  #horiz = TRUE, 
+  #las=1, 
+  #cex.names=0.4
+  #)
 
 ggplot(df, aes(name)) + 
   labs(x = 'Circuits') +
   ggtitle('Circuits Frequency') +
   geom_bar(fill="#076fa2") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  coord_flip()
 ```
 
 Number of collisions for each circuit.
@@ -210,6 +211,7 @@ df_year_winner = winner_Age()
 ```
 
 ```{r}
+names(df_year_winner) = c('year', 'driverId', 'final_points', 'fullname', 'age')
 df_year_winner
 ```
 
@@ -217,24 +219,27 @@ Winning driver age overtime
 
 ```{r}
 #plot for winner's age over time
-ggplot(df_year_winner, aes(x = X1, y = X5)) + 
+ggplot(df_year_winner, aes(x = year, y = age)) + 
   labs(x = 'Years', y = 'Age') +
   ggtitle('Winning driver age for every year') +
   geom_bar(stat = "identity") + 
   geom_col(fill = "#076fa2") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  geom_abline(slope = 0, intercept = mean(df_year_winner$X5), color = 'red', size = 1.5)  
+  theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust = 1)) +
+  geom_abline(slope = 0, intercept = mean(df_year_winner$age), color = 'red', size = 1.5)  
 ```
 
 How important is the pole position in each circuit to win the race?
 
+$PoleRatio = \frac{number\:of\:races\:in\:a\:circuit}{\:wins\:where\:driver\:had\:pole\:position}$
+
 ```{r}
+
 ggplot(pole_ratio, aes(x = X1, y = X2)) + 
   labs(x = 'Circuit', y = 'Ratio') +
   ggtitle('How important is the pole position') +
   geom_bar(stat = "identity") + 
   geom_col(fill = "#076fa2") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.margin = margin(0,0,1,1.5, "cm"))
 ```
 
 CORRELATION
