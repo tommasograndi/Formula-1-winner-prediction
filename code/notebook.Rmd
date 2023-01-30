@@ -158,8 +158,9 @@ treemap(nationality, index = 'Var1', vSize = 'Freq')
 ggplot(df, aes(name)) + 
   labs(x = 'Circuits') +
   ggtitle('Circuits Frequency') +
-  geom_bar(fill="#076fa2") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  geom_bar(fill="#076fa2", position = position_dodge(0.7)) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, size = 6)) 
+  
 ```
 
 Number of collisions for each circuit.
@@ -199,11 +200,10 @@ Recall function for winner age for.
 ```{r}
 winner_Age()
 df_year_winner = winner_Age()
-
+names(df_year_winner) = c('year', 'driverId', 'final_points', 'fullname', 'age')
 ```
 
 ```{r}
-names(df_year_winner) = c('year', 'driverId', 'final_points', 'fullname', 'age')
 df_year_winner
 ```
 
@@ -219,6 +219,7 @@ ggplot(df_year_winner, aes(x = year, y = age)) +
   theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust = 1)) +
   geom_abline(slope = 0, intercept = mean(df_year_winner$age), color = 'red', size = 1.5)  
 ```
+
 
 How important is the pole position in each circuit to win the race?
 
