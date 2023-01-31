@@ -12,10 +12,10 @@ df_test_lm = df_test_lm[, c(1,4,7,8,24,15)]
 
 #CLASSIFICATION (not yet runned, just written to be tested later)
 
-# train model
+# train model, decision tree for predicting class winner:{0,1}
 #df.decision.train = rpart(formula, data=df_train, method="class")
 
-# predict probabilities of class
+# predict probabilities of class winner
 #df.decision.test = predict(model.rpart, newdata=df_test, method="prob")
 
 # we want to predict the probability of class=1 (winner) or class=0 (not winner)

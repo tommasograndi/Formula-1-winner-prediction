@@ -11,6 +11,9 @@ output:
 ```{r}
 library(ggplot2)
 library(dplyr)
+library(rpart)
+library(corrplot)
+library(treemap)
 ```
 
 # Data cleansing and pre-processing
@@ -128,6 +131,12 @@ df.results.merged$fastestLap_ms[is.na(df.results.merged$fastestLap_ms)] <- 0
 df.results.merged = df.results.merged[, -c(11)]  #dropping column of old fastestLapTime 
 ```
 
+Assigning merged dataframe to a new variable called df.
+
+```{r}
+df = df.results.merged
+```
+
 ## EDA and plots.
 
 ```{r}
@@ -196,6 +205,7 @@ barplot(
   las=1, 
   cex.names=0.4
   )
+
 #CONTROLLARE RATIO
 n_accident <- table(df[df$status == 'Accident', 'name'])
 n_accident <- as.data.frame(n_accident)
@@ -215,9 +225,10 @@ ggplot(n_accident, aes(x = Var1, y = ratio)) +
 Recall function for winner age for.
 
 ```{r}
-winner_Age()
 df_year_winner = winner_Age()
 names(df_year_winner) = c('year', 'driverId', 'final_points', 'fullname', 'age')
+
+df_year_winner
 ```
 
 Winning driver age overtime
