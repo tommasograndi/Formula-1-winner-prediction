@@ -1,12 +1,19 @@
-# Formula 1 winner prediction.
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# FORMULA 1 CHAMPIONSHIP EDA AND WINNER PREDICTION
 
 # Loading libraries
 
 ```{r}
 library(ggplot2)
+library(dplyr)
 ```
 
-### DATA CLEANING AND PROCESSING
+# Data cleansing and pre-processing
 
 ```{r}
 head(results)
@@ -66,8 +73,6 @@ drivers$fullname = paste(drivers$forename, drivers$surname)
 names(drivers$nationality) = 'driv_nationality' #renaming driver's nationality column
 drivers_copy = drivers_copy[-c(3, 4, 9)]  #creating with only columns to be merged with results
 
-
-#merging
 df.results.merged = merge(df.results.merged, drivers_copy, by = c('driverId'))
 ```
 
@@ -105,7 +110,7 @@ colnames(const_standing_copy)[c(3:4)] = c('const_points', 'const_wins')
 df.results.merged = merge(df.results.merged, const_standing_copy, by = c('raceId', 'constructorId'))
 ```
 
-PROCESSING some data columns.
+Processing some data columns.
 
 ```{r}
 #casting fastestLapSpeed to numeric
@@ -123,7 +128,7 @@ df.results.merged$fastestLap_ms[is.na(df.results.merged$fastestLap_ms)] <- 0
 df.results.merged = df.results.merged[, -c(11)]  #dropping column of old fastestLapTime 
 ```
 
-### EDA and plots.
+## EDA and plots.
 
 ```{r}
 ggplot(df, aes(x=driver_age)) + 
@@ -215,10 +220,6 @@ df_year_winner = winner_Age()
 names(df_year_winner) = c('year', 'driverId', 'final_points', 'fullname', 'age')
 ```
 
-```{r}
-df_year_winner
-```
-
 Winning driver age overtime
 
 ```{r}
@@ -234,10 +235,7 @@ ggplot(df_year_winner, aes(x = year, y = age)) +
 
 How important is the pole position in each circuit to win the race?
 
-$PoleRatio = \frac{number\:of\:races\:in\:a\:circuit}{\:wins\:where\:driver\:had\:pole\:position}$
-
 ```{r}
-
 ggplot(pole_ratio, aes(x = X1, y = X2)) + 
   labs(x = 'Circuit', y = 'Ratio') +
   ggtitle('How important is the pole position') +
@@ -246,7 +244,7 @@ ggplot(pole_ratio, aes(x = X1, y = X2)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1), plot.margin = margin(0,0,1,1.5, "cm"))
 ```
 
-CORRELATION
+Correlation
 
 ```{r}
 #CORRELATION MATRIX for numerical features

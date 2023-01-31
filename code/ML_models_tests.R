@@ -10,11 +10,6 @@ df_test_lm = data.frame(c(df, prova)) #creating df with predictions attached to 
 df_test_lm = df_test_lm[, c(1,4,7,8,24,15)]
 
 
-
-
-
-
-
 #CLASSIFICATION (not yet runned, just written to be tested later)
 
 # train model
