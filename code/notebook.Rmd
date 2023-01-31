@@ -166,23 +166,22 @@ ggplot(df, aes(name)) +
 Number of collisions for each circuit.
 
 ```{r}
-#barplot for collisions
-par(mar=c(3, 7, 2, 1))
-
 #barplot showing number of collisions for each circuit
-barplot(
-  table(df.results.merged[df.results.merged$status == 'Collision', 'name']), 
-  horiz = TRUE, 
-  las=1, 
-  cex.names=0.4
-)
+n_collision <- table(df[df$status == 'Collision', 'name'])
+n_collision <- as.data.frame(n_collision)
+
+ggplot(n_collision, aes(x = Var1, y = Freq)) + 
+  labs(x = 'Circuits') +
+  ggtitle('Number of collisions per circuit') +
+  geom_bar(fill="#076fa2", position = position_dodge(0.7), stat = 'identity') +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, size = 6)) 
 ```
 
 Accident ratio for each circuit.
 
 ```{r}
 #get circuit names for which there was a collision
-accident_names = names(table(df.results.merged[df.results.merged$status == 'Accident', 'name']))
+accident_names = names(table(df[df$status == 'Accident', 'name']))
 
 #barplot showing accident ratio (n^Accident/n^races per circuit)
 par(mar=c(3, 7, 2, 1))
@@ -192,6 +191,19 @@ barplot(
   las=1, 
   cex.names=0.4
   )
+#CONTROLLARE RATIO
+n_accident <- table(df[df$status == 'Accident', 'name'])
+n_accident <- as.data.frame(n_accident)
+accident_ratio <- c()
+for (i in 1:nrow(n_accident)) {
+  accident_ratio <- n_accident$Freq/sum(n_accident$Freq)
+}
+n_accident['ratio'] <- accident_ratio
+ggplot(n_accident, aes(x = Var1, y = ratio)) + 
+  labs(x = 'Circuits') +
+  ggtitle('Accident ratio per circuit') +
+  geom_bar(fill="#076fa2", position = position_dodge(0.7), stat = 'identity') +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, size = 6)) 
 
 ```
 
@@ -219,7 +231,6 @@ ggplot(df_year_winner, aes(x = year, y = age)) +
   theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust = 1)) +
   geom_abline(slope = 0, intercept = mean(df_year_winner$age), color = 'red', size = 1.5)  
 ```
-
 
 How important is the pole position in each circuit to win the race?
 
