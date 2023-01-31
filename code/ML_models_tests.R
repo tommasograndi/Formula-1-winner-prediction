@@ -28,8 +28,14 @@ df.nb
 prediction <- predict(df.nb, df.test)
 table(df.test$winner, prediction)
 
-#CLASSIFICATION (not yet runned, just written to be tested later)
+#test with less features 
+df.nb.2 <- naiveBayes(winner ~ number + grid + points + laps + fastestLapSpeed + status + driv_nationality + fullname + round + const_name + name + const_points + const_wins + driver_age + fastestLap_ms, data = df.results.merged)
+prediction2 <- predict(df.nb.2, df.test)
+table(df.test$winner, prediction2)
+### comments: performed worse. we could use it as a benchmark for the decision tree (expected to perform better)
 
+
+#CLASSIFICATION (not yet runned, just written to be tested later)
 # train model, decision tree for predicting class winner:{0,1}
 #df.decision.train = rpart(formula, data=df_train, method="class")
 
