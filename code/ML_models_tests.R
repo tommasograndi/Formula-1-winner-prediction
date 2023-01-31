@@ -9,7 +9,7 @@ prova = data.frame(prova)
 df_test_lm = data.frame(c(df, prova)) #creating df with predictions attached to original df
 df_test_lm = df_test_lm[, c(1,4,7,8,24,15)]
 
-# BAYES CLASSIFIER
+# BAYES CLASSIFIER (need to test if it works)
 library(caret)
 library(e1071)
 for (i in 1:nrow(df.results.merged)) {
