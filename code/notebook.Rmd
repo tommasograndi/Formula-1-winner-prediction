@@ -279,6 +279,7 @@ df$winner = as.factor(df$winner) #converting the column to a factor.
 ```
 
 Defining TRAIN and TEST dataframes.
+
 ```{r}
 races_list = unique(df$raceId)
 races_list
@@ -299,6 +300,7 @@ df.test = df[df$raceId %in% races_test_list, ]
 ```
 
 Adding a column with factor value for class winner:{0,1}
+
 ```{r}
 for (i in 1:nrow(df)) {
   if (df[i, "positionOrder"] == 1){
@@ -311,24 +313,14 @@ df$winner = as.factor(df$winner)
 
 ```
 
+Defining scoring function for Regression.
 
-Defining scoring function for Regression. 
 ```{r}
 
 ```
 
-Defining scoring function for Classification. 
+Defining scoring function for Classification.
+
 ```{r}
 
 ```
-
-
-
-
-
-
-
-
-
-
-

@@ -25,7 +25,7 @@ score_regression(df.test, predict_rt) #34%
 library(caret)
 library(e1071)
 
-df.nb <- naiveBayes(winner ~ . -positionOrder -resultId -points -positionText, data = df.train)
+df.nb <- naiveBayes(winner ~ . -positionOrder -resultId -points, data = df.train)
 prediction_nb <- predict(df.nb, newdata = df.test, type = 'raw')
 score_classification(df.test, prediction_nb)
 #CLASSIFICATION (dec tree not working for factors)
