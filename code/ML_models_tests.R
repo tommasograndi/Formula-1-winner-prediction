@@ -25,9 +25,9 @@ score_regression(df.test, predict_rt) #34%
 library(caret)
 library(e1071)
 
-df.nb <- naiveBayes(winner ~ . -positionOrder -resultId -points, data = df.train)
+df.nb <- naiveBayes(winner ~ . -positionOrder -resultId -points -positionText, data = df.train)
 prediction_nb <- predict(df.nb, newdata = df.test, type = 'raw')
-
+score_classification(df.test, prediction_nb)
 #CLASSIFICATION (dec tree not working for factors)
 #train model, decision tree for predicting class winner:{0,1}
 df.dt = rpart(winner ~ . -positionOrder -resultId -points -status -driv_nationality -fullname -const_name -name, data = df.train, method="class")
@@ -39,3 +39,10 @@ score_classification(df.test, prediction_dt)
 # we want to predict the probability of class=1 (winner) or class=0 (not winner)
 #Then we are going to sort the probabilities and pick the greater probability of class=1, hence the driver with 
 #the greatest probability of being a winner. 
+
+
+# SVM
+library(e1071)
+df.lsvm = svm(winner ~ ., data = df.train, kernel = 'linear')
+prediction_svm <- predict(df.lsvm, newdata = df.test)
+score_classification(df.test, prediction_svm)
