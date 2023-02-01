@@ -72,3 +72,25 @@ ggplot(pole_ratio, aes(x = X1, y = X2)) +
 
 
 
+
+### DEFINING TRAINING/TEST SETS
+races_list = unique(df$raceId)
+races_list
+
+races_train_idx = sample(length(races_list), length(races_list)*0.8)
+races_train_idx
+
+races_train_list = races_list[races_train_idx]
+length(races_train_list)
+
+races_test_list = races_list[-races_train_idx]
+length(races_test_list)
+
+#creating train & test dataframes
+df.train = df[df$raceId %in% races_train_list, ]
+df.test = df[df$raceId %in% races_test_list, ]
+
+
+
+
+

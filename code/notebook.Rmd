@@ -264,3 +264,71 @@ corrplot(corr_matrix)
 ```
 
 ### DEFINING AND TRAINING ML MODELS FOR PREDICTION.
+
+Adding column winner for regression and classification.
+
+```{r}
+for (i in 1:nrow(df)) {
+  if (df[i, "positionOrder"] == 1){
+    df[i, 'winner'] <- 1
+  }else{
+    df[i, 'winner'] <- 0
+  }
+}
+df$winner = as.factor(df$winner) #converting the column to a factor. 
+```
+
+Defining TRAIN and TEST dataframes.
+```{r}
+races_list = unique(df$raceId)
+races_list
+
+races_train_idx = sample(length(races_list), length(races_list)*0.8)
+races_train_idx
+
+races_train_list = races_list[races_train_idx]
+length(races_train_list)
+
+races_test_list = races_list[-races_train_idx]
+length(races_test_list)
+
+#creating train & test dataframes
+df.train = df[df$raceId %in% races_train_list, ]
+df.test = df[df$raceId %in% races_test_list, ]
+
+```
+
+Adding a column with factor value for class winner:{0,1}
+```{r}
+for (i in 1:nrow(df)) {
+  if (df[i, "positionOrder"] == 1){
+    df[i, 'winner'] <- 1
+  }else{
+    df[i, 'winner'] <- 0
+  }
+}
+df$winner = as.factor(df$winner)
+
+```
+
+
+Defining scoring function for Regression. 
+```{r}
+
+```
+
+Defining scoring function for Classification. 
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+

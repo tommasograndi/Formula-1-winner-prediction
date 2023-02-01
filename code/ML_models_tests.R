@@ -1,48 +1,41 @@
 #tests for LM MODELS
 
 #linear regression
-model = lm(positionOrder ~ grid + number + points + laps + fastestLapSpeed + round + const_points + driver_age + fastestLap_ms, data = df)
-summary(model)
+linearmodel = lm(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms, data = df.train)
+summary(linearmodel)
 
-prova = predict(model, df)
-prova = data.frame(prova)
-df_test_lm = data.frame(c(df, prova)) #creating df with predictions attached to original df
-df_test_lm = df_test_lm[, c(1,4,7,8,24,15)]
+predict_lm = predict(linearmodel, df.test)
+predict_lm = data.frame(predict_lm)
+score_regression(df.test, predict_lm) #performed 54%
 
-# BAYES CLASSIFIER (need to test if it works)
+####alternative model
+linearmodel.new = lm(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins, data = df.train.new)
+predict_lm_new = predict(linearmodel.new, df.test.new)
+predict_lm_new = data.frame(predict_lm_new)
+score_regression(df.test.new, predict_lm_new) #performed actually 2% better, 56%
+
+
+#REGRESSION TREE
+predict_rt = predict(tree(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms
+                               , df.train), newdata = df.test)
+score_regression(df.test, predict_rt) #34%
+
+
+# BAYES CLASSIFIER
 library(caret)
 library(e1071)
-for (i in 1:nrow(df.results.merged)) {
-  if (df.results.merged[i, "positionText"] == '1'){
-    df.results.merged[i, 'winner'] <- 1
-  }else{
-    df.results.merged[i, 'winner'] <- 0
-  }
-}
-df.idx <- sample(nrow(df), 19178)
-df.train <- df.results.merged[df.idx,]
-df.test <- df.results.merged[-df.idx,]
 
-df.nb <- naiveBayes(winner ~ ., data = df.results.merged)
-df.nb
-prediction <- predict(df.nb, df.test)
-table(df.test$winner, prediction)
+df.nb <- naiveBayes(winner ~ . -positionOrder -resultId -points, data = df.train)
+prediction_nb <- predict(df.nb, newdata = df.test, type = 'raw')
 
-#test with less features 
-df.nb.2 <- naiveBayes(winner ~ number + grid + points + laps + fastestLapSpeed + status + driv_nationality + fullname + round + const_name + name + const_points + const_wins + driver_age + fastestLap_ms, data = df.results.merged)
-prediction2 <- predict(df.nb.2, df.test)
-table(df.test$winner, prediction2)
-### comments: performed worse. we could use it as a benchmark for the decision tree (expected to perform better)
-
-
-#CLASSIFICATION (not yet runned, just written to be tested later)
-# train model, decision tree for predicting class winner:{0,1}
-#df.decision.train = rpart(formula, data=df_train, method="class")
+#CLASSIFICATION (dec tree not working for factors)
+#train model, decision tree for predicting class winner:{0,1}
+df.dt = rpart(winner ~ . -positionOrder -resultId -points -status -driv_nationality -fullname -const_name -name, data = df.train, method="class")
 
 # predict probabilities of class winner
-#df.decision.test = predict(df.decision.train, newdata = df_test, method="prob")
+prediction_dt = predict(df.dt, newdata = df.test, method="prob")
+score_classification(df.test, prediction_dt)
 
 # we want to predict the probability of class=1 (winner) or class=0 (not winner)
 #Then we are going to sort the probabilities and pick the greater probability of class=1, hence the driver with 
 #the greatest probability of being a winner. 
-
