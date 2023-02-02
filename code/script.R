@@ -90,6 +90,9 @@ length(races_test_list)
 df.train = df[df$raceId %in% races_train_list, ]
 df.test = df[df$raceId %in% races_test_list, ]
 
+df.train.clean = df[df$raceId %in% races_train_list, ] #for clean df
+df.test.clean = df[df$raceId %in% races_test_list, ] #for clean df
+
 
 
 
