@@ -90,15 +90,17 @@ df.test.clean$name[which(!(df.test.clean$name %in% unique(df.train.clean$name)))
 #DECISION TREE (+8%)
 df.dt.clean = rpart(winner ~ . -positionOrder -resultId -points, data = df.train.clean, method="class")
 prediction_dt_clean = predict(df.dt.clean, newdata = df.test.clean, method="prob")
-score_classification(df.test.clean, prediction_dt_clean) #58 (withouth this technique was 50%)
+score_classification(df.test.clean, prediction_dt_clean) #58 (without this technique was 50%)
 
 #BAYES CLASSIFIER (+10%)
 df.nb <- naiveBayes(winner ~ . -positionOrder -resultId -points, data = df.train.clean)
 prediction_nb <- predict(df.nb, newdata = df.test.clean, type = 'raw')
 score_classification(df.test.clean, prediction_nb) #51%
 
-
-
-
+#RANDOM FOREST
+library(randomForest)
+df.rf <- randomForest(winner ~ . -points -positionOrder -resultId, data = df.train, ntree = 200, na.action = na.exclude)
+prediction.rf <- predict(df.rf, df.test, type = 'prob')
+score_classification(df.test, prediction.rf)
 
 
