@@ -102,6 +102,13 @@ df.nb <- naiveBayes(winner ~ . -positionOrder -resultId -points, data = df.train
 prediction_nb <- predict(df.nb, newdata = df.test.clean, type = 'raw')
 score_classification(df.test.clean, prediction_nb) #51%
 
+#RANDOM FOREST
+library(randomForest)
+df.rf <- randomForest(winner ~ . -points -positionOrder -resultId, data = df.train.clean, ntree = 200)
+prediction.rf <- predict(df.rf, df.test.clean, type = 'prob')
+prediction.rf[is.na(prediction.rf)] <- 0
+score_classification(df.test.clean, prediction.rf). #43%
+
 
 
 
