@@ -28,6 +28,7 @@ library(e1071)
 df.nb <- naiveBayes(winner ~ . -positionOrder -resultId -points, data = df.train)
 prediction_nb <- predict(df.nb, newdata = df.test, type = 'raw')
 score_classification(df.test, prediction_nb)
+
 #CLASSIFICATION (dec tree not working for factors)
 #train model, decision tree for predicting class winner:{0,1}
 df.dt = rpart(winner ~ . -positionOrder -resultId -points -status -driv_nationality -fullname -const_name -name, data = df.train, method="class")
