@@ -7,7 +7,7 @@ corrplot(corr_matrix)
 ### WINNER FOR EACH YEAR
 #create dataframe for driver points
 df_points = merge(driver_standings, races[, c(1,2)], by = 'raceId') #merging races info
-df_points = merge(df_points, df[, c(1, 3, 17, 24)], by = c('raceId', 'driverId')) 
+df_points = merge(df_points, df[, c(1, 2, 17, 24)], by = c('raceId', 'driverId')) 
 
 #Writing a function fo find winner of F1 for each year (extracting age, points, name, driveId)
 winner_Age = function(){
@@ -67,3 +67,8 @@ ggplot(pole_ratio, aes(x = X1, y = X2)) +
 
 
 
+#testing different type of kernels
+kernel = c("linear", "polynomial", "radial", "sigmoid")
+
+for (k in kernel){
+  

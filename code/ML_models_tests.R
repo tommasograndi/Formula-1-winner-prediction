@@ -27,7 +27,7 @@ levels(df.test$name) <- levels(df.train$name)
 #linear regression
 linearmodel = lm(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms, data = df.train)
 predict_lm = predict(linearmodel, df.test)
-score_regression(df.test, predict_lm) 
+score_regression(df.test, predict_lm) #58%
 summary(linearmodel)
 
 #REGRESSION TREE
@@ -59,7 +59,6 @@ prediction_nb <- predict(df.nb, newdata = df.test, type = 'raw')
 score_classification(df.test, prediction_nb) #50%
  
 #DECISION TREE.
-#using df.test 
 df.dt = rpart(winner ~ . -positionOrder -resultId -points -status -fullname -const_name, data = df.train, method="class")
 prediction_dt = predict(df.dt, newdata = df.test, method="prob")
 score_classification(df.test, prediction_dt) #58%
@@ -77,7 +76,7 @@ score_classification(df.test, SVM_class) #56%
 df.rf <- randomForest(winner ~ . -points -positionOrder -resultId -const_name -name -fullname -status, data = df.train, ntree = 200)
 prediction.rf <- predict(df.rf, df.test, type = 'prob')
 prediction.rf[is.na(prediction.rf)] <- 0
-score_classification(df.test.clean, prediction.rf) #60%
+score_classification(df.test, prediction.rf) #60%
 
 
 
