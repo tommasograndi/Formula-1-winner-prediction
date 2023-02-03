@@ -421,15 +421,36 @@ As we can see the linear model obtain an R-squared of 65% that confirms a good c
 predict_lm = predict(linearmodel, df.test)
 score_regression(df.test, predict_lm) 
 ```
-
 So the model predict correctly the winner for a race 58% of the time.
 
-TRYING CLASSIFICATION BY REMOVING CATEGORICAL FEATURE ISSUE using NAs substitution We are using df.train.clean and df.test.clean (copies of df.train and df.clean but without categorical features converted in factors). Also, in df.test.clean we substituted categories not present in df.train.clean with NAS
-
+#### Regression tree
+Decision trees are another technique that we have used both in regression and in classification. 
+The model used in regression take explicatory features just the numerical feature written below:
 ```{r}
-df.test.clean$status[which(!(df.test.clean$status %in% unique(df.train.clean$status)))] <- NA
-df.test.clean$driv_nationality[which(!(df.test.clean$driv_nationality %in% unique(df.train.clean$driv_nationality)))] <- NA
-df.test.clean$fullname[which(!(df.test.clean$fullname %in% unique(df.train.clean$fullname)))] <- NA
-df.test.clean$const_name[which(!(df.test.clean$const_name %in% unique(df.train.clean$const_name)))] <- NA
-df.test.clean$name[which(!(df.test.clean$name %in% unique(df.train.clean$name)))] <- NA
+predict_rt = predict(tree(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins
+                               , df.train), newdata = df.test)
+score_regression(df.test, predict_rt) #47%
 ```
+
+
+
+
+For the classification methods, we decided to remove those categorical features as status, fullname and const_name that when converted in factors where causing problems in the application of the techniques, or drastically reduced performances due to their dimension (all of those 3 factors presented more than 100 levels).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
