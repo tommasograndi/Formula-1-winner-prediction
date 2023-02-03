@@ -68,7 +68,3 @@ ggplot(pole_ratio, aes(x = X1, y = X2)) +
 
 
 #testing different type of kernels
-kernel = c("linear", "polynomial", "radial", "sigmoid")
-
-for (k in kernel){
-  
