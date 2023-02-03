@@ -15,18 +15,21 @@ library(dplyr)
 library(rpart)
 library(corrplot)
 library(treemap)
+library(tree)
 ```
 
 # Data cleansing and pre-processing
 
 
 ```{r}
-df = read.csv("/datasets/df.csv")
+df = read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/UNICATT/Data analysis techniques and tools/F1_prediction/datasets/df.csv")
 ```
 
 ```{r}
 head(df)
 ```
+<br>
+<br>
 
 # EDA and plots.
 
@@ -91,7 +94,7 @@ accident_names = names(table(df[df$status == 'Accident', 'name']))
 #barplot showing accident ratio (n^Accident/n^races per circuit)
 par(mar=c(3, 7, 2, 1))
 barplot(
-  (table(df.results.merged[df.results.merged$status == 'Accident', 'name']))/(table(df.results.merged[, 'name'])[accident_names]),
+  (table(df[df$status == 'Accident', 'name']))/(table(df[, 'name'])[accident_names]),
   horiz = TRUE, 
   las=1, 
   cex.names=0.4
@@ -113,18 +116,31 @@ ggplot(n_accident, aes(x = Var1, y = ratio)) +
 
 ```
 
-Recall function for winner age for.
+Winning driver age overtime
+```{r}
+df_points = read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/UNICATT/Data analysis techniques and tools/F1_prediction/datasets/df_points.csv")
+```
 
 ```{r}
+winner_Age = function(){
+  df_year_winner = matrix(nrow = 1, ncol=5)
+  years = seq(1958, 2022, 1)
+  for (y in years){
+    df_year = df_points[df_points$year == y, c(2,4,9,10)]
+    id_winner = df_year[which.max(df_year$points), ]
+    df_year_winner <- rbind(df_year_winner, c(y, id_winner$driverId, id_winner$points, id_winner$fullname, id_winner$driver_age))
+    
+  }
+  df_year_winner = data.frame(df_year_winner)
+  df_year_winner = df_year_winner[-1,]
+  return(df_year_winner)
+}
 df_year_winner = winner_Age()
 names(df_year_winner) = c('year', 'driverId', 'final_points', 'fullname', 'age')
+df_year_winner$age = as.numeric(df_year_winner$age)
+head(df_year_winner)
 ```
 
-```{r}
-df_year_winner
-```
-
-Winning driver age overtime
 
 ```{r}
 #plot for winner's age over time
@@ -140,6 +156,10 @@ ggplot(df_year_winner, aes(x = year, y = age)) +
 How important is the pole position in each circuit to win the race?
 
 ```{r}
+pole_ratio = read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/UNICATT/Data analysis techniques and tools/F1_prediction/datasets/pole_ratio.csv")
+```
+
+```{r}
 ggplot(pole_ratio, aes(x = X1, y = X2)) + 
   labs(x = 'Circuit', y = 'Ratio') +
   ggtitle('How important is the pole position') +
@@ -152,7 +172,7 @@ Correlation
 
 ```{r}
 #CORRELATION MATRIX for numerical features
-corr_matrix = cor(df.results.merged[c(7,8,9,10,11,16,20,21,22,23)])
+corr_matrix = cor(df[c(7,8,9,10,11,16,20,21,22,23,25)])
 corrplot(corr_matrix)
 ```
 
@@ -305,8 +325,9 @@ As we can see the linear model obtain an R-squared of 65% that confirms a good c
 ```{r}
 predict_lm = predict(linearmodel, df.test)
 score_regression(df.test, predict_lm) 
+
+
 ```
-So the model predict correctly the winner for a race 58% of the time.
 
 #### Regression tree
 Decision trees are another technique that we have used both in regression and in classification. 
@@ -319,7 +340,7 @@ score_regression(df.test, predict_rt) #47%
 
 
 
-
+### CLASSIFICATION
 For the classification methods, we decided to remove those categorical features as status, fullname and const_name that when converted in factors where causing problems in the application of the techniques, or drastically reduced performances due to their dimension (all of those 3 factors presented more than 100 levels).
 
 
