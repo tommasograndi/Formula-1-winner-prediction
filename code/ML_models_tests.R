@@ -30,6 +30,18 @@ predict_lm = predict(linearmodel, df.test)
 score_regression(df.test, predict_lm) #58%
 summary(linearmodel)
 
+###PCA
+df.pca$x[,1]
+
+df.train = df[df.pca$raceId %in% races_train_list, ]
+df.test = df[df$raceId %in% races_test_list, ]
+
+linearmodel = lm(positionOrder ~ , data = df.train)
+predict_lm = predict(linearmodel, df.test)
+score_regression(df.test, predict_lm) #58%
+summary(linearmodel)
+####
+
 #REGRESSION TREE
 predict_rt = predict(tree(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins
                                , df.train), newdata = df.test)
