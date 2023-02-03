@@ -27,15 +27,8 @@ levels(df.test$name) <- levels(df.train$name)
 #linear regression
 linearmodel = lm(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms, data = df.train)
 predict_lm = predict(linearmodel, df.test)
-predict_lm = data.frame(predict_lm)
 score_regression(df.test, predict_lm) #performed 54%
-
-####alternative model (reduced dataset, added wins)
-linearmodel.new = lm(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins, data = df.train.new)
-predict_lm_new = predict(linearmodel.new, df.test.new)
-predict_lm_new = data.frame(predict_lm_new)
-score_regression(df.test.new, predict_lm_new) #performed actually 2% better, 56%
-#with reduced arrive to 58%
+summary(linearmodel)
 
 #REGRESSION TREE
 predict_rt = predict(tree(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms
@@ -48,13 +41,6 @@ library(KernelKnn)
 knn_regressor = knnreg(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms, data = df.train, k = 15) 
 prediction_knn <- predict(knn_regressor, newdata = df.test, )
 score_regression(df.test, prediction_knn) #37%
-
-#SVM REGRESSIONS
-library(e1071)
-test_scaled_train = scale(df.train[, c(6,7,8,10,11,16,20,21,22,23)], center = TRUE, scale = TRUE)
-df.lsvm.regres = svm(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms, data = test_scaled_train, kernel = 'linear')
-prediction_svm_regres <- predict(df.lsvm, newdata = df.test)
-score_regression(df.test, prediction_svm_regres) #11% (we could drop it)
 
 
 ### CLASSIFICATION TECHNIQUES
@@ -82,6 +68,12 @@ SVM_class = data.frame(attributes(prediction_svm)$probabilities)
 score_classification(df.test, SVM_class) #52%. (when removing factors was just 32%)
 #32% with linear, 50.7% with polynomial, 46% with sigmoid, 52% with radial basis. 
 
+#RANDOM FOREST
+df.rf <- randomForest(winner ~ . -points -positionOrder -resultId -const_name -name -fullname -status, data = df.train, ntree = 200)
+prediction.rf <- predict(df.rf, df.test, type = 'prob')
+prediction.rf[is.na(prediction.rf)] <- 0
+score_classification(df.test.clean, prediction.rf) #56,6%
+
 
 ### TRYING CLASSIFICATION BY REMOVING CATEGORICAL FEATURE ISSUE using NAs substitution
 #we are using df.train.clean and df.test.clean (copies of df.train and df.clean but without categorical features converted in factors)
@@ -107,7 +99,8 @@ library(randomForest)
 df.rf <- randomForest(winner ~ . -points -positionOrder -resultId, data = df.train.clean, ntree = 200)
 prediction.rf <- predict(df.rf, df.test.clean, type = 'prob')
 prediction.rf[is.na(prediction.rf)] <- 0
-score_classification(df.test.clean, prediction.rf). #43%
+score_classification(df.test.clean, prediction.rf) #45%
+
 
 
 

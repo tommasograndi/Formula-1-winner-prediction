@@ -1,15 +1,10 @@
-#creating df with only numerical features
-merged_numeric = df.results.merged[, c(1:6,7,8,9,10,12,19,23,24,25)]
-
-# adding 0s when there is NA in fastestLapSpeed
-df["fastestLapSpeed"][is.na(df["fastestLapSpeed"])] <- 0
-
 
 #CORRELATION MATRIX for numerical features
 corr_matrix = cor(df.results.merged[c(7,8,9,10,11,16,20,21,22,23)])
 corrplot(corr_matrix)
 
 
+### WINNER FOR EACH YEAR
 #create dataframe for driver points
 df_points = merge(driver_standings, races[, c(1,2)], by = 'raceId') #merging races info
 df_points = merge(df_points, df[, c(1, 3, 17, 24)], by = c('raceId', 'driverId')) 
@@ -69,31 +64,6 @@ ggplot(pole_ratio, aes(x = X1, y = X2)) +
   ggtitle('How important is the pole position') +
   geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-
-
-
-
-### DEFINING TRAINING/TEST SETS
-races_list = unique(df$raceId)
-races_list
-
-races_train_idx = sample(length(races_list), length(races_list)*0.8)
-races_train_idx
-
-races_train_list = races_list[races_train_idx]
-length(races_train_list)
-
-races_test_list = races_list[-races_train_idx]
-length(races_test_list)
-
-#creating train & test dataframes
-df.train = df[df$raceId %in% races_train_list, ]
-df.test = df[df$raceId %in% races_test_list, ]
-
-df.train.clean = df[df$raceId %in% races_train_list, ] #for clean df
-df.test.clean = df[df$raceId %in% races_test_list, ] #for clean df
-
-
 
 
 
