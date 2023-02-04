@@ -411,6 +411,18 @@ SVM_class = data.frame(attributes(prediction_svm)$probabilities)
 score_classification(df.test, SVM_class)
 ```
 
+### Visualize final prediction results
+```{r}
+accuracy_results = data.frame(c(score_regression(df.test, predict_lm), score_regression(df.test, predict_rt), score_classification(df.test, prediction_nb), score_classification(df.test, prediction_dt), score_classification(df.test, prediction.rf), score_classification(df.test, SVM_class)),c('Linear Regression', 'Regression tree','Bayes classifier','Decision tree','Random forest','SVM classifier'))
+colnames(accuracy_results) = c('score', 'method')
+
+ggplot(accuracy_results, aes(x = score, y = method)) + 
+  labs(x = 'Score', y = 'Method') +
+  geom_bar(stat = "identity") + 
+  geom_col(fill = "#076fa2") 
+```
+
+
 # CONCLUSIONS
 
 Our initial goal wasn't to analyze deeply the data that characterize a Formula 1 Race. Our goal was to rather try to predict the winner of a Race with the least possible number of numerical and categorical features.
