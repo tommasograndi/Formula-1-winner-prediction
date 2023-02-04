@@ -25,14 +25,14 @@ levels(df.test$name) <- levels(df.train$name)
 ### REGRESSION MODELS
 
 #linear regression
-linearmodel = lm(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms, data = df.train)
+linearmodel = lm(positionOrder ~ driverId + grid + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms +wins, data = df.train)
 predict_lm = predict(linearmodel, df.test)
 score_regression(df.test, predict_lm) #58%
 summary(linearmodel)
 
 
 #REGRESSION TREE
-predict_rt = predict(tree(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins
+predict_rt = predict(tree(positionOrder ~ + grid + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins
                                , df.train), newdata = df.test)
 score_regression(df.test, predict_rt) #47%
 
@@ -55,12 +55,12 @@ library(e1071)
 #We are removing categorical features with a lot of levels since they are not providing useful informations to the model. 
 
 # BAYES CLASSIFIER
-df.nb <- naiveBayes(winner ~ . -positionOrder -resultId -points -status -fullname -const_name, data = df.train)
+df.nb <- naiveBayes(winner ~ . -number -positionOrder -resultId -points -status -fullname -const_name, data = df.train)
 prediction_nb <- predict(df.nb, newdata = df.test, type = 'raw')
 score_classification(df.test, prediction_nb) #50%
  
 #DECISION TREE.
-df.dt = rpart(winner ~ . -positionOrder -resultId -points -status -fullname -const_name, data = df.train, method="class")
+df.dt = rpart(winner ~ . -number -positionOrder -resultId -points -status -fullname -const_name, data = df.train, method="class")
 prediction_dt = predict(df.dt, newdata = df.test, method="prob")
 score_classification(df.test, prediction_dt) #58%
 rpart.plot(df.dt,faclen = 2)
@@ -74,7 +74,7 @@ score_classification(df.test, SVM_class) #56%
 #50% with linear, 48% with polynomial, 56% with sigmoid, 56% with radial basis. 
 
 #RANDOM FOREST
-df.rf <- randomForest(winner ~ . -points -positionOrder -resultId -const_name -name -fullname -status, data = df.train, ntree = 200)
+df.rf <- randomForest(winner ~ . -number -points -positionOrder -resultId -const_name -name -fullname -status, data = df.train, ntree = 200)
 prediction.rf <- predict(df.rf, df.test, type = 'prob')
 prediction.rf[is.na(prediction.rf)] <- 0
 score_classification(df.test, prediction.rf) #60%
