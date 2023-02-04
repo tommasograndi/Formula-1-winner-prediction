@@ -15,6 +15,7 @@ library(dplyr)
 library(rpart)
 library(corrplot)
 library(treemap)
+library(treemapify)
 library(tree)
 library(randomForest)
 library(caret)
@@ -38,7 +39,7 @@ head(df)
 
 ```{r}
 ggplot(df, aes(x=driver_age)) + 
- geom_histogram(aes(y=..density..), colour="black", fill= '#076fa2')+
+ geom_histogram(aes(y=after_stat(density)), colour="black", fill= '#076fa2')+
  geom_density(alpha=.2, fill="#FF6666") +
  labs(title = 'Histogram of driver age')
 
@@ -61,7 +62,10 @@ ggplot(subset(df, df$fastestLapSpeed > 100), aes(x=fastestLapSpeed)) +
 ```{r}
 nationality = data.frame(table(df$driv_nationality))
 nationality$Var1 = as.character(nationality$Var1)
-treemap(nationality, index = 'Var1', vSize = 'Freq')
+ggplot(nationality, aes(area = Freq, fill = Freq, label = Var1)) +
+  geom_treemap() +
+  geom_treemap_text(fontface = "italic", colour = "white", place = "centre", grow = TRUE) +
+  labs(title = "Treemap of the drivers' nationality", fill = "Frequency")
 
 ```
 
@@ -91,29 +95,10 @@ ggplot(n_collision, aes(x = Var1, y = Freq)) +
 Accident ratio for each circuit.
 
 ```{r}
-#get circuit names for which there was a collision
-accident_names = names(table(df[df$status == 'Accident', 'name']))
-
-#barplot showing accident ratio (n^Accident/n^races per circuit)
-par(mar=c(3, 7, 2, 1))
-barplot(
-  (table(df[df$status == 'Accident', 'name']))/(table(df[, 'name'])[accident_names]),
-  horiz = TRUE, 
-  las=1, 
-  cex.names=0.4
-  )
-
-#CONTROLLARE RATIO
-n_accident <- table(df[df$status == 'Accident', 'name'])
-n_accident <- as.data.frame(n_accident)
-accident_ratio <- c()
-for (i in 1:nrow(n_accident)) {
-  accident_ratio <- n_accident$Freq/sum(n_accident$Freq)
-}
-n_accident['ratio'] <- accident_ratio
-ggplot(n_accident, aes(x = Var1, y = ratio)) + 
+n_accident = read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/UNICATT/Data analysis techniques and tools/F1_prediction/datasets/n_accident.csv")
+ggplot(n_accident, aes(x = as.character(Accident.Names), y = Accident.ratio)) + 
   labs(x = 'Circuits') +
-  ggtitle('Accident ratio per circuit') +
+  ggtitle('Number of collisions per circuit') +
   geom_bar(fill="#076fa2", position = position_dodge(0.7), stat = 'identity') +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, size = 6)) 
 

@@ -5,7 +5,7 @@
 score_classification <- function(test, prediction){
   
   df.score.class = data.frame(test, prediction)
-  colnames(df.score.class)[c(26,27)] = c('pred_0', 'pred_1')  #change with 25 and 26
+  colnames(df.score.class)[c(26,27)] = c('pred_0', 'pred_1')  
   
   racelist = unique(df.score.class$raceId)
   
@@ -30,7 +30,7 @@ score_classification(df.test, prediction)
 score_regression <- function(test, prediction){
   
   df.score.regres = data.frame(test, prediction)
-  colnames(df.score.regres)[c(26)] = c('prediction') #substitute with 25
+  colnames(df.score.regres)[c(26)] = c('prediction') #substitute with 26
   
   racelist = unique(df.score.regres$raceId)
   
