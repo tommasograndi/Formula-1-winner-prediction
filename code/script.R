@@ -64,6 +64,8 @@ ggplot(pole_ratio, aes(x = X1, y = X2)) +
   ggtitle('How important is the pole position') +
   geom_bar(stat = "identity") + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  
+
 
 
 

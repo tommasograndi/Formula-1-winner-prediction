@@ -138,7 +138,7 @@ ggplot(df_year_winner, aes(x = year, y = age)) +
   geom_bar(stat = "identity") + 
   geom_col(fill = "#076fa2") +
   theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust = 1)) +
-  geom_abline(slope = 0, intercept = mean(df_year_winner$age), color = 'red', size = 1.5)  
+  geom_abline(slope = 0, intercept = mean(df_year_winner$age), color = 'red', linewidth = 1.5)  
 ```
 
 How important is the pole position in each circuit to win the race?

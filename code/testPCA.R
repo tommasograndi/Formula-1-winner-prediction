@@ -1,8 +1,16 @@
-
+library(FactoMineR)
+#PCA
 pca = prcomp(scale(df[,c(6,7,10,11,16,20,21,22,23,25)], scale=TRUE))
 summary(pca) #first 7 PCAs explain 94% most of the model
 pca$x[,1:7]
 
+#with factominer
+pca = PCA(scale(df[,c(6,7,10,11,16,20,21,22,23,25)], scale=TRUE))
+summary(pca)
+
+
+
+#define the pca dataframe
 df.pca = data.frame(df, pca$x[,1:10])
 colnames(df.pca)[26:35] = c('PCA1', 'PCA2','PCA3','PCA4','PCA5','PCA6','PCA7','PCA8','PCA9','PCA10')
 
@@ -34,4 +42,8 @@ score_PCA <- function(test, prediction){
 summary(lm(positionOrder ~ PCA1+PCA2+PCA3+PCA4+PCA5+PCA6+PCA7, data = df.train.pca))
 predict_lm_pc = predict(lm(positionOrder ~ PCA1+PCA2+PCA3+PCA4+PCA5+PCA6+PCA7, data = df.train.pca), df.test.pca)
 score_PCA(df.test.pca, predict_lm_pc) #60%
+
+#We try to performed a principal component regression using the first 7 PC components that accounted
+#for 95% of cumulative variance explained, but results were practically identical to the 
+#regression we conducted using the original numerical features. 
 
