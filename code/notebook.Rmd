@@ -21,19 +21,21 @@ library(randomForest)
 library(caret)
 library(e1071)
 library(rpart.plot)
+library(car)
 ```
 
 ## Data loading
 
 ```{r}
 df = read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/UNICATT/Data analysis techniques and tools/F1_prediction/datasets/df.csv")
+str(df)
 ```
 
 ```{r}
 head(df)
 ```
 
-<br> <br>
+<br> 
 
 Our starting dataframe is composed by 25 columns of features that define for each row a Driver performance in a specific Race of a specific year. So for each row:
 
@@ -218,6 +220,11 @@ corrplot(corr_matrix)
 
 # DEFINING AND TRAINING ML MODELS FOR PREDICTION.
 
+```{r}
+df$winner = as.factor(df$winner) #converting the column to a factor. 
+```
+
+
 Defining TRAIN and TEST dataframes.
 
 ```{r}
@@ -252,9 +259,12 @@ df.test$fullname = as.factor(df.test$fullname)
 df.test$const_name = as.factor(df.test$const_name)
 df.test$name = as.factor(df.test$name)
 str(df.test)
+```
+Fixing FACTOR LEVELS in the testing dataframe
+In this way we set factor levels of ALL categorical columns of df.test to be exactly the same as df.train.
+Otherwise, we would encounter problem in the classifications method when predicting the new data from df.test using the model trained on df.train. 
+```{r}
 
-#fixing FACTOR LEVELS in the testing dataframe
-#In this way we set factor levels of ALL categorical columns of df.test to be exactly the same as df.train.
 levels(df.test$status) <- levels(df.train$status)
 levels(df.test$driv_nationality) <- levels(df.train$driv_nationality)
 levels(df.test$fullname) <- levels(df.train$fullname)
@@ -336,6 +346,8 @@ For the regression model we decided to use as explanatory variables most of the 
 #linear regression
 linearmodel = lm(positionOrder ~ grid + laps + fastestLapSpeed + round + const_points + const_wins + fastestLap_ms + wins, data = df.train)
 summary(linearmodel)
+avPlots(linearmodel)
+
 ```
 
 As we can see the linear model obtain an R-squared of 65% that confirms a good capacity of the model to represent variability in the original data. Also, the majority of variables are strongly significant. We can now try to run a prediction and recall 'score_regression' function to see the results of the prediction.

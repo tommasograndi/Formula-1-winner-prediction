@@ -1,5 +1,7 @@
 #tests for LM MODEL
 
+library(car)
+
 #converting TRAIN and TEST categorical features in factors
 df.train$driv_nationality = as.factor(df.train$driv_nationality)
 df.train$fullname = as.factor(df.train$fullname)
@@ -29,12 +31,15 @@ linearmodel = lm(positionOrder ~ driverId + grid + laps + fastestLapSpeed + roun
 predict_lm = predict(linearmodel, df.test)
 score_regression(df.test, predict_lm) #58%
 summary(linearmodel)
+avPlots(linearmodel)
 
 
 #REGRESSION TREE
 predict_rt = predict(tree(positionOrder ~ + grid + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins
                                , df.train), newdata = df.test)
 score_regression(df.test, predict_rt) #47%
+
+
 
 
 ### KNN REGRESSION
