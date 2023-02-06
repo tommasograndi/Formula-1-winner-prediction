@@ -358,14 +358,20 @@ summary(linearmodel)
 avPlots(linearmodel)
 
 ```
+As we can see the linear model obtain an R-squared of 65% that confirms a good capacity of the model to represent variability in the original data. Also, the majority of variables are strongly significant.
 
-As we can see the linear model obtain an R-squared of 65% that confirms a good capacity of the model to represent variability in the original data. Also, the majority of variables are strongly significant. We can now try to run a prediction and recall 'score_regression' function to see the results of the prediction.
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+qqPlot(linearmodel)
+```
+In order to test the significance of the whole model, we should first look at the normality of the residuals. 
+From the qqplot presented above, it's clear how the residuals follow aproximately a normal distribution (they lie on a straight line as normal residuals should).
+Looking at the F-test value of the model, it's clear how the really low value suggests a strong significance of the whole regression. Hence we can say the model does a better job in describing the dataset than just the expected value, the mean.
+
+We can now try to run a prediction and recall 'score_regression' function to see the results of the prediction. 
 
 ```{r}
 predict_lm = predict(linearmodel, df.test)
 score_regression(df.test, predict_lm) 
-
-
 ```
 
 <br>
@@ -447,5 +453,6 @@ ggplot(accuracy_results, aes(x = score, y = method)) +
 # CONCLUSIONS
 
 Our initial goal wasn't to analyze deeply the data that characterize a Formula 1 Race. Our goal was to rather try to predict the winner of a Race with the least possible number of numerical and categorical features.
+If we look at the last chart with all the accuracy score computed from both regression and classification models, we can see quite good results: all of the models predicted with a accuracy of about 60%, apart from regression tree and Bayes classifier. The first model is maybe too weak for such a big dataset like this one and for the second the explanation could be similar: the Bayes classifier works like a benchmark for other classifiers, so it is only an indicator of performance and maybe it is too weak too. 
 
 <br> <br> <br> <br>
