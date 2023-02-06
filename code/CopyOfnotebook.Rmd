@@ -21,6 +21,7 @@ library(randomForest)
 library(caret)
 library(e1071)
 library(rpart.plot)
+library(car)
 ```
 
 ## Data loading
@@ -34,7 +35,7 @@ str(df)
 head(df)
 ```
 
-<br> <br>
+<br> 
 
 Our starting dataframe is composed by 25 columns of features that define for each row a Driver performance in a specific Race of a specific year. So for each row:
 
@@ -219,6 +220,11 @@ corrplot(corr_matrix)
 
 # DEFINING AND TRAINING ML MODELS FOR PREDICTION.
 
+```{r}
+df$winner = as.factor(df$winner) #converting the column to a factor. 
+```
+
+
 Defining TRAIN and TEST dataframes.
 
 ```{r}
@@ -232,18 +238,9 @@ races_test_list = races_list[-races_train_idx]
 df.train = df[df$raceId %in% races_train_list, ]
 df.test = df[df$raceId %in% races_test_list, ]
 
-str(df.train)
-str(df.test)
-
 ```
 
 <br>
-
-```{r}
-df$winner <- as.factor(df$winner)
-str(df)
-```
-
 
 Fixing data.train and data.test for categorical features.
 
@@ -262,9 +259,12 @@ df.test$fullname = as.factor(df.test$fullname)
 df.test$const_name = as.factor(df.test$const_name)
 df.test$name = as.factor(df.test$name)
 str(df.test)
+```
+Fixing FACTOR LEVELS in the testing dataframe
+In this way we set factor levels of ALL categorical columns of df.test to be exactly the same as df.train.
+Otherwise, we would encounter problem in the classifications method when predicting the new data from df.test using the model trained on df.train. 
+```{r}
 
-#fixing FACTOR LEVELS in the testing dataframe
-#In this way we set factor levels of ALL categorical columns of df.test to be exactly the same as df.train.
 levels(df.test$status) <- levels(df.train$status)
 levels(df.test$driv_nationality) <- levels(df.train$driv_nationality)
 levels(df.test$fullname) <- levels(df.train$fullname)
@@ -346,6 +346,8 @@ For the regression model we decided to use as explanatory variables most of the 
 #linear regression
 linearmodel = lm(positionOrder ~ grid + laps + fastestLapSpeed + round + const_points + const_wins + fastestLap_ms + wins, data = df.train)
 summary(linearmodel)
+avPlots(linearmodel)
+
 ```
 
 As we can see the linear model obtain an R-squared of 65% that confirms a good capacity of the model to represent variability in the original data. Also, the majority of variables are strongly significant. We can now try to run a prediction and recall 'score_regression' function to see the results of the prediction.
@@ -404,7 +406,6 @@ rpart.plot(df.dt,faclen = 2)
 #### RANDOM FOREST
 
 ```{r}
-str(df.train)
 df.rf <- randomForest(winner ~ . -number -points -positionOrder -resultId -const_name -name -fullname -status, data = df.train, ntree = 200)
 prediction.rf <- predict(df.rf, df.test, type = 'prob')
 prediction.rf[is.na(prediction.rf)] <- 0
@@ -421,6 +422,18 @@ prediction_svm <- predict(df.lsvm, newdata = df.test[,-c(5,6,8,9,12,13,15,17)], 
 SVM_class = data.frame(attributes(prediction_svm)$probabilities)
 score_classification(df.test, SVM_class)
 ```
+
+### Visualize final prediction results
+```{r}
+accuracy_results = data.frame(c(score_regression(df.test, predict_lm), score_regression(df.test, predict_rt), score_classification(df.test, prediction_nb), score_classification(df.test, prediction_dt), score_classification(df.test, prediction.rf), score_classification(df.test, SVM_class)),c('Linear Regression', 'Regression tree','Bayes classifier','Decision tree','Random forest','SVM classifier'))
+colnames(accuracy_results) = c('score', 'method')
+
+ggplot(accuracy_results, aes(x = score, y = method)) + 
+  labs(x = 'Score', y = 'Method') +
+  geom_bar(stat = "identity") + 
+  geom_col(fill = "#076fa2") 
+```
+
 
 # CONCLUSIONS
 
