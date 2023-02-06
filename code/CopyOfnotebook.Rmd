@@ -1,7 +1,6 @@
 ---
 title: "F1 Prediction"
 output:
-  html_document: default
   pdf_document: default
 ---
 
@@ -35,7 +34,7 @@ str(df)
 head(df)
 ```
 
-<br> 
+\newline 
 
 Our starting dataframe is composed by 25 columns of features that define for each row a Driver performance in a specific Race of a specific year. So for each row:
 
@@ -67,7 +66,7 @@ Our starting dataframe is composed by 25 columns of features that define for eac
 
 -   2 columns for dates: 'dob' is birth date for each driver, 'date' is the date of the Race.
 
-<br> <br>
+\newline \newline
 
 # EDA and plots.
 
@@ -79,7 +78,7 @@ ggplot(df, aes(x=driver_age)) +
 
 ```
 
-<br>
+\newline
 
 ```{r}
 ggplot(df, aes(x=driver_age)) +
@@ -88,7 +87,7 @@ ggplot(df, aes(x=driver_age)) +
   labs(title = "Drivers' Age", x = "Drivers' Age")
 ```
 
-<br>
+\newline
 
 ```{r}
 ggplot(subset(df, df$fastestLapSpeed > 100), aes(x=fastestLapSpeed)) + 
@@ -97,7 +96,7 @@ ggplot(subset(df, df$fastestLapSpeed > 100), aes(x=fastestLapSpeed)) +
  labs(title = 'Histogram for fastest speed in a lap', x = 'Speed')
 ```
 
-<br>
+\newline
 
 ```{r}
 nationality = data.frame(table(df$driv_nationality))
@@ -109,7 +108,7 @@ ggplot(nationality, aes(area = Freq, fill = Freq, label = Var1)) +
 
 ```
 
-<br>
+\newline
 
 ```{r}
 ggplot(df, aes(name)) + 
@@ -120,7 +119,7 @@ ggplot(df, aes(name)) +
   
 ```
 
-<br>
+\newline
 
 Number of collisions for each circuit.
 
@@ -136,7 +135,7 @@ ggplot(n_collision, aes(x = Var1, y = Freq)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1, size = 6)) 
 ```
 
-<br>
+\newline
 
 Accident ratio for each circuit.
 
@@ -150,7 +149,7 @@ ggplot(n_accident, aes(x = as.character(Accident.Names), y = Accident.ratio)) +
 
 ```
 
-<br>
+\newline
 
 Winning driver age overtime
 
@@ -189,7 +188,7 @@ ggplot(df_year_winner, aes(x = year, y = age)) +
   geom_abline(slope = 0, intercept = mean(df_year_winner$age), color = 'red', linewidth = 1.5)  
 ```
 
-<br>
+\newline
 
 How important is the pole position in each circuit to win the race?
 
@@ -206,7 +205,7 @@ ggplot(pole_ratio, aes(x = X1, y = X2)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-<br>
+\newline
 
 Correlation
 
@@ -216,7 +215,7 @@ corr_matrix = cor(df[c(7,8,9,10,11,16,20,21,22,23,25)])
 corrplot(corr_matrix)
 ```
 
-<br> <br>
+\newline \newline
 
 # DEFINING AND TRAINING ML MODELS FOR PREDICTION.
 
@@ -240,7 +239,7 @@ df.test = df[df$raceId %in% races_test_list, ]
 
 ```
 
-<br>
+\newline
 
 Fixing data.train and data.test for categorical features.
 
@@ -272,7 +271,7 @@ levels(df.test$const_name) <- levels(df.train$const_name)
 levels(df.test$name) <- levels(df.train$name)
 ```
 
-<br> <br>
+\newline \newline
 
 ### SCORING FUNCTIONS
 
@@ -282,7 +281,7 @@ For the regressions, the scoring functions sort the prediction of positionOrder 
 
 For the classification, the scoring function works similarly but there is a difference. We are using the classifications models to predict winner defined in {0,1} but the models in action are going to assign 1 to multiple drivers in the same race (but we can have just one winner in a race). So instead we look for the greatest probability among the driver of a race to have the winner feature equal to 1. The driver with the greatest probability of having the winner feature equal to 1 would be the driver with the greatest probability of winning the race and hence he is the winner our function pick. The definition of score works in the same way as in the scoring function for regressions.
 
-<br>
+\newline
 
 Defining scoring function for Regression.
 
@@ -332,7 +331,7 @@ score_classification <- function(test, prediction){
 }
 ```
 
-<br>
+\newline
 
 ### REGRESSION
 
@@ -359,7 +358,7 @@ score_regression(df.test, predict_lm)
 
 ```
 
-<br>
+\newline
 
 #### Regression tree
 
@@ -371,13 +370,13 @@ predict_rt = predict(tree(positionOrder ~ grid + number + laps + fastestLapSpeed
 score_regression(df.test, predict_rt) #47%
 ```
 
-<br> <br>
+\newline \newline
 
 ### CLASSIFICATION
 
-Using the features class 'winner' that we have created, we want to predict the probability of class=1 (winner) or class=0 (not winner). Then we are going to sort the probabilities and pick the greater probability of class=1, hence the driver with the greatest probability of being a winner. <br>
+Using the features class 'winner' that we have created, we want to predict the probability of class=1 (winner) or class=0 (not winner). Then we are going to sort the probabilities and pick the greater probability of class=1, hence the driver with the greatest probability of being a winner. \newline
 
-For the classification methods, we decided to remove those categorical features as status, fullname and const_name that when converted in factors where causing problems in the application of the techniques, or drastically reduced performances due to their dimension (all of those 3 factors presented more than 100 levels that were not accepted by the functions or ruining the prediction accuracy). <br>
+For the classification methods, we decided to remove those categorical features as status, fullname and const_name that when converted in factors where causing problems in the application of the techniques, or drastically reduced performances due to their dimension (all of those 3 factors presented more than 100 levels that were not accepted by the functions or ruining the prediction accuracy). \newline
 
 #### BAYES CLASSIFIER
 
@@ -387,7 +386,7 @@ prediction_nb <- predict(df.nb, newdata = df.test, type = 'raw')
 score_classification(df.test, prediction_nb) 
 ```
 
-<br>
+\newline
 
 #### DECISION TREES
 
@@ -401,7 +400,7 @@ score_classification(df.test, prediction_dt) #58%
 rpart.plot(df.dt,faclen = 2)
 ```
 
-<br>
+\newline
 
 #### RANDOM FOREST
 
@@ -412,7 +411,7 @@ prediction.rf[is.na(prediction.rf)] <- 0
 score_classification(df.test, prediction.rf) 
 ```
 
-<br>
+\newline
 
 #### SVM classifier
 
@@ -439,4 +438,4 @@ ggplot(accuracy_results, aes(x = score, y = method)) +
 
 Our initial goal wasn't to analyze deeply the data that characterize a Formula 1 Race. Our goal was to rather try to predict the winner of a Race with the least possible number of numerical and categorical features.
 
-<br> <br> <br> <br>
+\newline \newline \newline \newline
