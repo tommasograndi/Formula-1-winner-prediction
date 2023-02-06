@@ -1,8 +1,8 @@
 ---
 title: "F1 Prediction"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 # FORMULA 1 CHAMPIONSHIP EDA AND WINNER PREDICTION
@@ -35,37 +35,37 @@ str(df)
 head(df)
 ```
 
-<br> 
+<br>
 
-Our starting dataframe is composed by 25 columns of features that define for each row a Driver performance in a specific Race of a specific year. So for each row:
+Our starting dataframe `df` is composed by 25 columns of features that define for each row a Driver performance in a specific Race of a specific year. So for each row:
 
--   5 columns describe the unique observation: raceId, driverId, constructorId, circuitId, resultId. They were useful in the initial part of the data processing to merge multiple features from other datasets into this one main dataframe that include all the features that we later use for data analysis and prediction.
+-   5 columns describe the unique observation: `raceId`, `driverId`, `constructorId`, `circuitId`, `resultId`. They were useful in the initial part of the data processing to merge multiple features from other datasets into this one main dataframe that include all the features that we later use for data analysis and prediction.
 
--   2 columns define the perfomance of the driver in the specific race, mainly 'positionOrder' and the binary 'winner'. These are the target variables that we used for the regression and classification tasks.
+-   2 columns define the perfomance of the driver in the specific race, mainly `positionOrder` and the binary `winner`. These are the target variables of the regression and classification methods.
 
 -   11 columns are numerical features used:
 
-    -   number, number of each driver's car
-    -   grid, starting position for the driver
-    -   points, number of points earned in the race
-    -   laps, number of laps in the race
-    -   fastestLapSpeed
-    -   round, number of the Race in the season
-    -   const_points, number of points earned by the team before this race
-    -   const_wins, number of wins of the team before the race
-    -   driver_age, age of each driver
-    -   fastestLap_ms, fastest lap in the qualification race
-    -   wins, number of wins before the race for the driver
+    -   `number`, number of each driver's car
+    -   `grid`, starting position for the driver
+    -   `points`, number of points earned in the race
+    -   `laps`, number of laps in the race
+    -   `fastestLapSpeed`
+    -   `round`, number of the Race in the season
+    -   `const_points`, number of points earned by the team before this race
+    -   `const_wins`, number of wins of the team before the race
+    -   `driver_age`, age of each driver
+    -   `fastestLap_ms`, fastest lap in the qualification race
+    -   `wins`, number of wins before the race for the driver
 
 -   5 columns that describe categorical features:
 
-    -   status, what happened in the race for the driver
-    -   driv_nationality
-    -   fullname, name of the driver
-    -   const_name, name of the team
-    -   name, name of the circuit in which the race takes place
+    -   `status`, what happened in the race for the driver
+    -   `driv_nationality`
+    -   `fullname`, name of the driver
+    -   `const_name`, name of the team
+    -   `name`, name of the circuit in which the race takes place
 
--   2 columns for dates: 'dob' is birth date for each driver, 'date' is the date of the Race.
+-   2 columns for dates: `dob` is birth date for each driver, `date` is the date of the Race.
 
 <br> <br>
 
@@ -120,7 +120,7 @@ ggplot(df, aes(name)) +
   
 ```
 
-<br>
+\\\\
 
 Number of collisions for each circuit.
 
@@ -224,8 +224,13 @@ corrplot(corr_matrix)
 df$winner = as.factor(df$winner) #converting the column to a factor. 
 ```
 
+<br>
 
-Defining TRAIN and TEST dataframes.
+### Partition the data for train and validation.
+
+For partitioning the data, we decided to use a different approach. Instead of just randomly select rows from the original dataset (we recall that each row is a driver's performance in a specific race) we decided to create a block of rows for each race (with each block containing multiple observation, i.e. all the drivers that attained the race) and randomly select 80% blocks for the training sample and the rest for the testing sample. <br>
+
+We decided to partition the data in this way in order to maintain the integrity of observations for each race. Otherwise, we could have situations in which in the testing sets there is just one driver for a Race, and so his performance would be assessed in the lack of opponents.
 
 ```{r}
 races_list = unique(df$raceId)
@@ -242,7 +247,7 @@ df.test = df[df$raceId %in% races_test_list, ]
 
 <br>
 
-Fixing data.train and data.test for categorical features.
+Fixing `df.train` and `df.test` for categorical features by converting those columns in factors.
 
 ```{r}
 #converting TRAIN and TEST categorical features in factors
@@ -260,9 +265,13 @@ df.test$const_name = as.factor(df.test$const_name)
 df.test$name = as.factor(df.test$name)
 str(df.test)
 ```
-Fixing FACTOR LEVELS in the testing dataframe
-In this way we set factor levels of ALL categorical columns of df.test to be exactly the same as df.train.
-Otherwise, we would encounter problem in the classifications method when predicting the new data from df.test using the model trained on df.train. 
+
+Fixing FACTOR LEVELS in the testing dataframe. <br>
+
+When partitioning the data, categories for nominal features are shuffled between df.train and df.test. This lead to a situation in which categories in df.test could not be present in df.train and so classification models trained on df.test would not consider other categories that are only present in df.test. <br>
+
+With the following lines of code we overcome this problem by setting factor levels of all categorical columns of df.test to be exactly the same as df.train. Otherwise, we would encounter problems in the classifications method when predicting the new data from df.test using the model trained on df.train.
+
 ```{r}
 
 levels(df.test$status) <- levels(df.train$status)
@@ -278,9 +287,9 @@ levels(df.test$name) <- levels(df.train$name)
 
 The two scoring functions we created, simply calculate the accuracy for the prediction of the winner of each race.
 
-For the regressions, the scoring functions sort the prediction of positionOrder for each race (by using raceId) and take the smallest value for the prediction. If the same driver (a row of df.test) has the real value of positionOrder equal to 1, then the prediction is correct and the score is increased by 1. After scrolling through all races that are present in df.test, the accuracy_score is defined as the ratio between score and the number of races.
+For the regressions, the scoring functions sort the prediction of `positionOrder` for each race (by using `raceId`) and take the smallest value for the prediction (since in the `positionsOrder` the winner has position 1, hence the smallest position). If the same driver (a row of df.test) has the real value of `positionOrder` equal to 1, then the prediction is correct and the score is increased by 1. After scrolling through all races that are contained in df.test, the `accuracy_score` is defined as the ratio between score and the number of races.
 
-For the classification, the scoring function works similarly but there is a difference. We are using the classifications models to predict winner defined in {0,1} but the models in action are going to assign 1 to multiple drivers in the same race (but we can have just one winner in a race). So instead we look for the greatest probability among the driver of a race to have the winner feature equal to 1. The driver with the greatest probability of having the winner feature equal to 1 would be the driver with the greatest probability of winning the race and hence he is the winner our function pick. The definition of score works in the same way as in the scoring function for regressions.
+For the classification, the scoring function works similarly but there is a difference. We are using the classifications models to predict `winner` defined in {0,1} but the models in action are going to assign 1 to multiple drivers in the same race (but we can have just one winner in a race). So instead we look for the greatest probability among the driver of a race to have the winner feature equal to 1. The driver with the greatest probability of having the `winner` feature equal to 1 would be the driver with the greatest probability of winning the race and hence he is the winner our function pick. The definition of score works in the same way as in the scoring function for regressions.
 
 <br>
 
@@ -290,7 +299,7 @@ Defining scoring function for Regression.
 score_regression <- function(test, prediction){
   
   df.score.regres = data.frame(test, prediction)
-  colnames(df.score.regres)[c(26)] = c('prediction') #substitute with 25
+  colnames(df.score.regres)[c(26)] = c('prediction') 
   
   racelist = unique(df.score.regres$raceId)
   
@@ -375,9 +384,9 @@ score_regression(df.test, predict_rt) #47%
 
 ### CLASSIFICATION
 
-Using the features class 'winner' that we have created, we want to predict the probability of class=1 (winner) or class=0 (not winner). Then we are going to sort the probabilities and pick the greater probability of class=1, hence the driver with the greatest probability of being a winner. <br>
+Using the features class `winner` that we have created, we want to predict the probability of class=1 (winner) or class=0 (not winner). Then we are going to sort the probabilities and pick the greater probability of class=1, hence the driver with the greatest probability of being a winner. <br>
 
-For the classification methods, we decided to remove those categorical features as status, fullname and const_name that when converted in factors where causing problems in the application of the techniques, or drastically reduced performances due to their dimension (all of those 3 factors presented more than 100 levels that were not accepted by the functions or ruining the prediction accuracy). <br>
+For the classification methods, we decided to remove those categorical features as `status`, `fullname` and `const_name` that when converted in factors where causing problems in the application of the techniques, or drastically reduced performances due to their dimension (all of those 3 factors presented more than 100 levels that were not accepted by the functions or ruined the prediction accuracy).
 
 #### BAYES CLASSIFIER
 
@@ -397,7 +406,7 @@ prediction_dt = predict(df.dt, newdata = df.test, method="prob")
 score_classification(df.test, prediction_dt) #58%
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 rpart.plot(df.dt,faclen = 2)
 ```
 
@@ -424,6 +433,7 @@ score_classification(df.test, SVM_class)
 ```
 
 ### Visualize final prediction results
+
 ```{r}
 accuracy_results = data.frame(c(score_regression(df.test, predict_lm), score_regression(df.test, predict_rt), score_classification(df.test, prediction_nb), score_classification(df.test, prediction_dt), score_classification(df.test, prediction.rf), score_classification(df.test, SVM_class)),c('Linear Regression', 'Regression tree','Bayes classifier','Decision tree','Random forest','SVM classifier'))
 colnames(accuracy_results) = c('score', 'method')
@@ -433,7 +443,6 @@ ggplot(accuracy_results, aes(x = score, y = method)) +
   geom_bar(stat = "identity") + 
   geom_col(fill = "#076fa2") 
 ```
-
 
 # CONCLUSIONS
 
