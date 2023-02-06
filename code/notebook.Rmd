@@ -37,11 +37,19 @@ head(df)
 
 <br>
 
-Our starting dataframe `df` is composed by 25 columns of features that define for each row a Driver performance in a specific Race of a specific year. So for each row:
+Our starting dataframe `df` is composed by 25 columns of features that define 
+for each row a Driver performance in a specific Race of a specific year. 
+So for each row:
 
--   5 columns describe the unique observation: `raceId`, `driverId`, `constructorId`, `circuitId`, `resultId`. They were useful in the initial part of the data processing to merge multiple features from other datasets into this one main dataframe that include all the features that we later use for data analysis and prediction.
+-   5 columns describe the unique observation: `raceId`, `driverId`, 
+    `constructorId`, `circuitId`, `resultId`. They were useful in the initial 
+    part of the data processing to merge multiple features from other datasets 
+    into this one main dataframe that include all the features that we later use
+    for data analysis and prediction.
 
--   2 columns define the perfomance of the driver in the specific race, mainly `positionOrder` and the binary `winner`. These are the target variables of the regression and classification methods.
+-   2 columns define the perfomance of the driver in the specific race, mainly 
+    `positionOrder` and the binary `winner`. These are the target variables of 
+    the regression and classification methods.
 
 -   11 columns are numerical features used:
 
@@ -65,7 +73,8 @@ Our starting dataframe `df` is composed by 25 columns of features that define fo
     -   `const_name`, name of the team
     -   `name`, name of the circuit in which the race takes place
 
--   2 columns for dates: `dob` is birth date for each driver, `date` is the date of the Race.
+-   2 columns for dates: `dob` is birth date for each driver, `date` is the date 
+    of the Race.
 
 <br> <br>
 
@@ -78,7 +87,12 @@ ggplot(df, aes(x=driver_age)) +
  labs(title = 'Histogram of driver age')
 
 ```
-
+The frequency of the drivers' age from 1950 to 2022 can be traced to a normal 
+distribution, with a peak around 30 years old. Since the column driver_age from 
+the data frame collects also the various age during which the drivers have raced, 
+we can interpret this histogram also like an indicator of the retirement age of 
+a pilot: we have a peak around 30 years old and then as the age increase its 
+frequency decrease, so we have less and less pilot with an higher age.
 <br>
 
 ```{r}
@@ -104,13 +118,15 @@ nationality = data.frame(table(df$driv_nationality))
 nationality$Var1 = as.character(nationality$Var1)
 ggplot(nationality, aes(area = Freq, fill = Freq, label = Var1)) +
   geom_treemap() +
-  geom_treemap_text(fontface = "italic", colour = "white", place = "centre", grow = TRUE) +
+  geom_treemap_text(fontface = "italic", colour = "white", place = "centre", 
+                    grow = TRUE) +
   labs(title = "Treemap of the drivers' nationality", fill = "Frequency")
 
 ```
 
 <br>
 
+This histogram shows the frequency of every circuit over time.
 ```{r}
 ggplot(df, aes(name)) + 
   labs(x = 'Circuits') +
@@ -122,7 +138,7 @@ ggplot(df, aes(name)) +
 
 \\\\
 
-Number of collisions for each circuit.
+Number of collisions per circuit.
 
 ```{r}
 #barplot showing number of collisions for each circuit
@@ -138,7 +154,7 @@ ggplot(n_collision, aes(x = Var1, y = Freq)) +
 
 <br>
 
-Accident ratio for each circuit.
+Accident ratio per circuit.
 
 ```{r}
 n_accident = read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/UNICATT/Data analysis techniques and tools/F1_prediction/datasets/n_accident.csv")
@@ -165,8 +181,8 @@ winner_Age = function(){
   for (y in years){
     df_year = df_points[df_points$year == y, c(2,4,9,10)]
     id_winner = df_year[which.max(df_year$points), ]
-    df_year_winner <- rbind(df_year_winner, c(y, id_winner$driverId, id_winner$points, id_winner$fullname, id_winner$driver_age))
-    
+    df_year_winner <- rbind(df_year_winner, c(y, id_winner$driverId, 
+                    id_winner$points, id_winner$fullname, id_winner$driver_age))
   }
   df_year_winner = data.frame(df_year_winner)
   df_year_winner = df_year_winner[-1,]
@@ -186,12 +202,15 @@ ggplot(df_year_winner, aes(x = year, y = age)) +
   geom_bar(stat = "identity") + 
   geom_col(fill = "#076fa2") +
   theme(axis.text.x = element_text(angle = 90, vjust=0.5, hjust = 1)) +
-  geom_abline(slope = 0, intercept = mean(df_year_winner$age), color = 'red', linewidth = 1.5)  
+  geom_abline(slope = 0, intercept = mean(df_year_winner$age), 
+              color = 'red', linewidth = 1.5)  
 ```
 
 <br>
 
-How important is the pole position in each circuit to win the race?
+How important is the pole position in each circuit to win the race? Each column 
+is the ratio between how many times a driver have won a race after he has 
+qualified first.
 
 ```{r}
 pole_ratio = read.csv("~/Library/Mobile Documents/com~apple~CloudDocs/UNICATT/Data analysis techniques and tools/F1_prediction/datasets/pole_ratio.csv")
@@ -228,9 +247,17 @@ df$winner = as.factor(df$winner) #converting the column to a factor.
 
 ### Partition the data for train and validation.
 
-For partitioning the data, we decided to use a different approach. Instead of just randomly select rows from the original dataset (we recall that each row is a driver's performance in a specific race) we decided to create a block of rows for each race (with each block containing multiple observation, i.e. all the drivers that attained the race) and randomly select 80% blocks for the training sample and the rest for the testing sample. <br>
+For partitioning the data, we decided to use a different approach. Instead of 
+just randomly select rows from the original dataset (we recall that each row is 
+a driver's performance in a specific race) we decided to create a block of rows 
+for each race (with each block containing multiple observation, i.e. all the 
+drivers that attained the race) and randomly select 80% blocks for the training 
+sample and the rest for the testing sample. <br>
 
-We decided to partition the data in this way in order to maintain the integrity of observations for each race. Otherwise, we could have situations in which in the testing sets there is just one driver for a Race, and so his performance would be assessed in the lack of opponents.
+We decided to partition the data in this way in order to maintain the integrity 
+of observations for each race. Otherwise, we could have situations in which in 
+the testing sets there is just one driver for a Race, and so his performance 
+would be assessed in the lack of opponents.
 
 ```{r}
 races_list = unique(df$raceId)
@@ -247,7 +274,8 @@ df.test = df[df$raceId %in% races_test_list, ]
 
 <br>
 
-Fixing `df.train` and `df.test` for categorical features by converting those columns in factors.
+Fixing `df.train` and `df.test` for categorical features by converting those 
+columns in factors.
 
 ```{r}
 #converting TRAIN and TEST categorical features in factors
@@ -268,9 +296,15 @@ str(df.test)
 
 Fixing FACTOR LEVELS in the testing dataframe. <br>
 
-When partitioning the data, categories for nominal features are shuffled between df.train and df.test. This lead to a situation in which categories in df.test could not be present in df.train and so classification models trained on df.test would not consider other categories that are only present in df.test. <br>
+When partitioning the data, categories for nominal features are shuffled between 
+df.train and df.test. This lead to a situation in which categories in df.test 
+could not be present in df.train and so classification models trained on df.test 
+would not consider other categories that are only present in df.test. <br>
 
-With the following lines of code we overcome this problem by setting factor levels of all categorical columns of df.test to be exactly the same as df.train. Otherwise, we would encounter problems in the classifications method when predicting the new data from df.test using the model trained on df.train.
+With the following lines of code we overcome this problem by setting factor 
+levels of all categorical columns of df.test to be exactly the same as df.train. 
+Otherwise, we would encounter problems in the classifications method when 
+predicting the new data from df.test using the model trained on df.train.
 
 ```{r}
 
@@ -285,11 +319,27 @@ levels(df.test$name) <- levels(df.train$name)
 
 ### SCORING FUNCTIONS
 
-The two scoring functions we created, simply calculate the accuracy for the prediction of the winner of each race.
+The two scoring functions we created, simply calculate the accuracy for the 
+prediction of the winner of each race.
 
-For the regressions, the scoring functions sort the prediction of `positionOrder` for each race (by using `raceId`) and take the smallest value for the prediction (since in the `positionsOrder` the winner has position 1, hence the smallest position). If the same driver (a row of df.test) has the real value of `positionOrder` equal to 1, then the prediction is correct and the score is increased by 1. After scrolling through all races that are contained in df.test, the `accuracy_score` is defined as the ratio between score and the number of races.
+For the regressions, the scoring functions sort the prediction of `positionOrder` 
+for each race (by using `raceId`) and take the smallest value for the prediction 
+(since in the `positionsOrder` the winner has position 1, hence the smallest 
+position). If the same driver (a row of df.test) has the real value of 
+`positionOrder` equal to 1, then the prediction is correct and the score is 
+increased by 1. After scrolling through all races that are contained in df.test, 
+the `accuracy_score` is defined as the ratio between score and the number of 
+races.
 
-For the classification, the scoring function works similarly but there is a difference. We are using the classifications models to predict `winner` defined in {0,1} but the models in action are going to assign 1 to multiple drivers in the same race (but we can have just one winner in a race). So instead we look for the greatest probability among the driver of a race to have the winner feature equal to 1. The driver with the greatest probability of having the `winner` feature equal to 1 would be the driver with the greatest probability of winning the race and hence he is the winner our function pick. The definition of score works in the same way as in the scoring function for regressions.
+For the classification, the scoring function works similarly but there is a 
+difference. We are using the classifications models to predict `winner` defined 
+in {0,1} but the models in action are going to assign 1 to multiple drivers in 
+the same race (but we can have just one winner in a race). So instead we look 
+for the greatest probability among the driver of a race to have the winner 
+feature equal to 1. The driver with the greatest probability of having the 
+`winner` feature equal to 1 would be the driver with the greatest probability 
+of winning the race and hence he is the winner our function pick. The definition 
+of score works in the same way as in the scoring function for regressions.
 
 <br>
 
@@ -347,27 +397,38 @@ score_classification <- function(test, prediction){
 
 #### Training and testing linear regression models.
 
-For the regression model we decided to use as explanatory variables most of the numerical features as: grid, laps, fastestLapSpeed, round, const_points, const_wins, fastestLap_ms and wins that presumably would help predict and explain the final position of the driver. Some variables were excluced as points, since its high correlation with the final position (higher number of points means a higher position, were 1 is the highest position).
+For the regression model we decided to use as explanatory variables most of the 
+numerical features as: grid, laps, fastestLapSpeed, round, const_points, 
+const_wins, fastestLap_ms and wins that presumably would help predict and 
+explain the final position of the driver. Some variables were excluced as points, 
+since its high correlation with the final position (higher number of points means 
+a higher position, were 1 is the highest position).
 
 ```{r}
 
-#first, we train and test a linear model with all numerical features in the dataset.
-#linear regression
-linearmodel = lm(positionOrder ~ grid + laps + fastestLapSpeed + round + const_points + const_wins + fastestLap_ms + wins, data = df.train)
+linearmodel = lm(positionOrder ~ grid + laps + fastestLapSpeed + round + 
+                   const_points + const_wins + fastestLap_ms + wins, data = df.train)
 summary(linearmodel)
 avPlots(linearmodel)
 
 ```
-As we can see the linear model obtain an R-squared of 65% that confirms a good capacity of the model to represent variability in the original data. Also, the majority of variables are strongly significant.
+As we can see the linear model obtain an R-squared of 65% that confirms a good 
+capacity of the model to represent variability in the original data. Also, the 
+majority of variables are strongly significant.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 qqPlot(linearmodel)
 ```
-In order to test the significance of the whole model, we should first look at the normality of the residuals. 
-From the qqplot presented above, it's clear how the residuals follow aproximately a normal distribution (they lie on a straight line as normal residuals should).
-Looking at the F-test value of the model, it's clear how the really low value suggests a strong significance of the whole regression. Hence we can say the model does a better job in describing the dataset than just the expected value, the mean.
+In order to test the significance of the whole model, we should first look at 
+the normality of the residuals. 
+From the qqplot presented above, it's clear how the residuals follow aproximately 
+a normal distribution (they lie on a straight line as normal residuals should).
+Looking at the F-test value of the model, it's clear how the really low value 
+suggests a strong significance of the whole regression. Hence we can say the 
+model does a better job in describing the dataset than just the mean.
 
-We can now try to run a prediction and recall 'score_regression' function to see the results of the prediction. 
+We can now try to run a prediction and recall 'score_regression' function to see 
+the results of the prediction. 
 
 ```{r}
 predict_lm = predict(linearmodel, df.test)
@@ -378,11 +439,14 @@ score_regression(df.test, predict_lm)
 
 #### Regression tree
 
-Decision trees are another technique that we have used both in regression and in classification. The model used in regression take as explanatory the same variables in the regression:
+Decision trees are another technique that we have used both in regression and in 
+classification. The model used in regression take as explanatory the same 
+variables in the regression:
 
 ```{r}
-predict_rt = predict(tree(positionOrder ~ grid + number + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins
-                               , df.train), newdata = df.test)
+predict_rt = predict(tree(positionOrder ~ grid + number + laps + fastestLapSpeed 
+                          + round + const_points + const_wins + driver_age 
+                          + fastestLap_ms + wins, df.train), newdata = df.test)
 score_regression(df.test, predict_rt) #47%
 ```
 
@@ -390,14 +454,23 @@ score_regression(df.test, predict_rt) #47%
 
 ### CLASSIFICATION
 
-Using the features class `winner` that we have created, we want to predict the probability of class=1 (winner) or class=0 (not winner). Then we are going to sort the probabilities and pick the greater probability of class=1, hence the driver with the greatest probability of being a winner. <br>
+Using the features class `winner` that we have created, we want to predict the 
+probability of class=1 (winner) or class=0 (not winner). Then we are going to 
+sort the probabilities and pick the greater probability of class=1, hence the 
+driver with the greatest probability of being a winner. <br>
 
-For the classification methods, we decided to remove those categorical features as `status`, `fullname` and `const_name` that when converted in factors where causing problems in the application of the techniques, or drastically reduced performances due to their dimension (all of those 3 factors presented more than 100 levels that were not accepted by the functions or ruined the prediction accuracy).
+For the classification methods, we decided to remove those categorical features 
+as `status`, `fullname` and `const_name` that when converted in factors where 
+causing problems in the application of the techniques, or drastically reduced 
+performances due to their dimension (all of those 3 factors presented more than 
+100 levels that were not accepted by the functions or ruined the prediction 
+accuracy).
 
 #### BAYES CLASSIFIER
 
 ```{r}
-df.nb <- naiveBayes(winner ~ . -number -positionOrder -resultId -points -status -fullname -const_name, data = df.train)
+df.nb <- naiveBayes(winner ~ . -number -positionOrder -resultId -points -status 
+                    -fullname -const_name, data = df.train)
 prediction_nb <- predict(df.nb, newdata = df.test, type = 'raw')
 score_classification(df.test, prediction_nb) 
 ```
@@ -407,7 +480,8 @@ score_classification(df.test, prediction_nb)
 #### DECISION TREES
 
 ```{r}
-df.dt = rpart(winner ~ . -number -positionOrder -resultId -points -status -fullname -const_name -dob -date, data = df.train, method="class")
+df.dt = rpart(winner ~ . -number -positionOrder -resultId -points -status 
+              -fullname -const_name -dob -date, data = df.train, method="class")
 prediction_dt = predict(df.dt, newdata = df.test, method="prob")
 score_classification(df.test, prediction_dt) #58%
 ```
@@ -421,7 +495,9 @@ rpart.plot(df.dt,faclen = 2)
 #### RANDOM FOREST
 
 ```{r}
-df.rf <- randomForest(winner ~ . -number -points -positionOrder -resultId -const_name -name -fullname -status, data = df.train, ntree = 200)
+df.rf <- randomForest(winner ~ . -number -points -positionOrder -resultId 
+                      -const_name -name -fullname -status, data = df.train, 
+                      ntree = 200)
 prediction.rf <- predict(df.rf, df.test, type = 'prob')
 prediction.rf[is.na(prediction.rf)] <- 0
 score_classification(df.test, prediction.rf) 
@@ -432,8 +508,10 @@ score_classification(df.test, prediction.rf)
 #### SVM classifier
 
 ```{r}
-df.lsvm = svm(winner ~ ., data = df.train[, -c(5,6,8,9,12,13,15,17)], kernel = 'linear', fitted = FALSE, probability = TRUE)   #sigmoid kernel working best
-prediction_svm <- predict(df.lsvm, newdata = df.test[,-c(5,6,8,9,12,13,15,17)], fitted = FALSE, probability = TRUE)
+df.lsvm = svm(winner ~ ., data = df.train[, -c(5,6,8,9,12,13,15,17)], 
+              kernel = 'linear', fitted = FALSE, probability = TRUE)   
+prediction_svm <- predict(df.lsvm, newdata = df.test[,-c(5,6,8,9,12,13,15,17)], 
+                          fitted = FALSE, probability = TRUE)
 SVM_class = data.frame(attributes(prediction_svm)$probabilities)
 score_classification(df.test, SVM_class)
 ```
@@ -441,7 +519,15 @@ score_classification(df.test, SVM_class)
 ### Visualize final prediction results
 
 ```{r}
-accuracy_results = data.frame(c(score_regression(df.test, predict_lm), score_regression(df.test, predict_rt), score_classification(df.test, prediction_nb), score_classification(df.test, prediction_dt), score_classification(df.test, prediction.rf), score_classification(df.test, SVM_class)),c('Linear Regression', 'Regression tree','Bayes classifier','Decision tree','Random forest','SVM classifier'))
+accuracy_results = data.frame(c(score_regression(df.test, predict_lm), 
+                                score_regression(df.test, predict_rt), 
+                                score_classification(df.test, prediction_nb), 
+                                score_classification(df.test, prediction_dt), 
+                                score_classification(df.test, prediction.rf), 
+                                score_classification(df.test, SVM_class)),
+                              c('Linear Regression', 'Regression tree',
+                                'Bayes classifier','Decision tree','Random forest',
+                                'SVM classifier'))
 colnames(accuracy_results) = c('score', 'method')
 
 ggplot(accuracy_results, aes(x = score, y = method)) + 
@@ -452,7 +538,15 @@ ggplot(accuracy_results, aes(x = score, y = method)) +
 
 # CONCLUSIONS
 
-Our initial goal wasn't to analyze deeply the data that characterize a Formula 1 Race. Our goal was to rather try to predict the winner of a Race with the least possible number of numerical and categorical features.
-If we look at the last chart with all the accuracy score computed from both regression and classification models, we can see quite good results: all of the models predicted with a accuracy of about 60%, apart from regression tree and Bayes classifier. The first model is maybe too weak for such a big dataset like this one and for the second the explanation could be similar: the Bayes classifier works like a benchmark for other classifiers, so it is only an indicator of performance and maybe it is too weak too. 
+Our initial goal wasn't to analyze deeply the data that characterize a Formula 1 
+Race. Our goal was to rather try to predict the winner of a Race with the least 
+possible number of numerical and categorical features.
+If we look at the last chart with all the accuracy score computed from both 
+regression and classification models, we can see quite good results: all of the 
+models predicted with a accuracy of about 60%, apart from regression tree and 
+Bayes classifier. The first model is maybe too weak for such a big dataset like 
+this one and for the second the explanation could be similar: the Bayes 
+classifier works like a benchmark for other classifiers, so it is only an 
+indicator of performance and maybe it is too weak too. 
 
 <br> <br> <br> <br>
