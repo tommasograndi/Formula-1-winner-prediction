@@ -35,8 +35,8 @@ avPlots(linearmodel)
 
 
 #REGRESSION TREE
-predict_rt = predict(tree(positionOrder ~ + grid + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins
-                               , df.train), newdata = df.test)
+regr_tree = tree(positionOrder ~ + grid + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins, df.train)
+predict_rt = predict(regr_tree, newdata = df.test)
 score_regression(df.test, predict_rt) #47%
 
 
@@ -69,6 +69,15 @@ df.dt = rpart(winner ~ . -number -positionOrder -resultId -points -status -fulln
 prediction_dt = predict(df.dt, newdata = df.test, method="prob")
 score_classification(df.test, prediction_dt) #58%
 rpart.plot(df.dt,faclen = 2)
+df.dt$variable.importance
+
+summary(df.dt)
+plotcp(df.dt)
+
+### pruning test
+set.seed (7)
+cv. <- cv.tree(tree.carseats , FUN = prune.misclass)
+
 
 
 #SVM CLASSIFICATION.
@@ -76,15 +85,14 @@ df.lsvm = svm(winner ~ . , data = df.train[, -c(5,8,9,12,15)], kernel = 'radial'
 prediction_svm <- predict(df.lsvm, newdata = df.test[,-c(5,8,9,12,15)], fitted = FALSE, probability = TRUE)
 SVM_class = data.frame(attributes(prediction_svm)$probabilities)
 score_classification(df.test, SVM_class) #56%
-#50% with linear, 48% with polynomial, 56% with sigmoid, 56% with radial basis. 
+#50% with linear, 48% with polynomial, 56% with sigmoid, 56% with radial basis.
+
 
 #RANDOM FOREST
 df.rf <- randomForest(winner ~ . -number -points -positionOrder -resultId -const_name -name -fullname -status, data = df.train, ntree = 200)
 prediction.rf <- predict(df.rf, df.test, type = 'prob')
 prediction.rf[is.na(prediction.rf)] <- 0
 score_classification(df.test, prediction.rf) #60%
-
-
 
 
 #####################
