@@ -75,5 +75,14 @@ for (i in 2:length(circuits)) {
 }
 df_speed <- subset(df_speed, df_speed$Max_Speed > 0)
 
+conta = 0
+for (i in (1:23693)){
+  if (df$positionOrder[i] == 1) {
+    if (df$positionOrder[i] == df$grid[i]){
+      conta = conta + 1
+    }
+  }
+}
+print(conta/1012)
 
 

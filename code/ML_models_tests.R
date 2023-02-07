@@ -82,8 +82,8 @@ cv. <- cv.tree(tree.carseats , FUN = prune.misclass)
 
 
 #SVM CLASSIFICATION.
-df.lsvm = svm(winner ~ . , data = df.train[, -c(5,8,9,12,15)], kernel = 'radial', fitted = FALSE, probability = TRUE)   #sigmoid kernel working best
-prediction_svm <- predict(df.lsvm, newdata = df.test[,-c(5,8,9,12,15)], fitted = FALSE, probability = TRUE)
+df.lsvm = svm(winner ~ . , data = df.train[, -c(5,6,8,9,12,13,14,15,17,18,19)], kernel = 'radial', fitted = FALSE, probability = TRUE)   #sigmoid kernel working best
+prediction_svm <- predict(df.lsvm, newdata = df.test[,-c(5,6,8,9,12,13,14,15,17,18,19)], fitted = FALSE, probability = TRUE)
 SVM_class = data.frame(attributes(prediction_svm)$probabilities)
 score_classification(df.test, SVM_class) #56%
 #50% with linear, 48% with polynomial, 56% with sigmoid, 56% with radial basis.
