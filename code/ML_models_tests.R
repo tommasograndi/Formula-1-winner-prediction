@@ -39,7 +39,8 @@ regr_tree = tree(positionOrder ~ + grid + laps + fastestLapSpeed + round + const
 predict_rt = predict(regr_tree, newdata = df.test)
 score_regression(df.test, predict_rt) #47%
 
-
+plot(regr_tree)
+text(regr_tree)
 
 
 ### KNN REGRESSION
