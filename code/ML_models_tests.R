@@ -88,6 +88,7 @@ SVM_class = data.frame(attributes(prediction_svm)$probabilities)
 score_classification(df.test, SVM_class) #56%
 #50% with linear, 48% with polynomial, 56% with sigmoid, 56% with radial basis.
 
+plot(df.lsvm, df.train)
 
 #RANDOM FOREST
 df.rf <- randomForest(winner ~ . -number -points -positionOrder -resultId -const_name -name -fullname -status, data = df.train, ntree = 200)
@@ -118,7 +119,6 @@ text(df.dt.clean)
 df.nb.clean <- naiveBayes(winner ~ . -positionOrder -resultId -points, data = df.train.clean)
 prediction_nb_clean <- predict(df.nb, newdata = df.test.clean, type = 'raw')
 score_classification(df.test.clean, prediction_nb_clean) #52%
-
 
 
 
