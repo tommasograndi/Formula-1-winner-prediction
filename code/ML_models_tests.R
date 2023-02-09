@@ -27,7 +27,7 @@ levels(df.test$name) <- levels(df.train$name)
 ### REGRESSION MODELS
 
 #linear regression
-linearmodel = lm(positionOrder ~ driverId + grid + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms +wins, data = df.train)
+linearmodel = lm(positionOrder ~  + grid + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms +wins, data = df.train)
 predict_lm = predict(linearmodel, df.test)
 score_regression(df.test, predict_lm) #58%
 summary(linearmodel)
@@ -35,9 +35,10 @@ avPlots(linearmodel)
 
 
 #REGRESSION TREE
-regr_tree = tree(positionOrder ~ + grid + laps + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins, df.train)
+regr_tree = tree(positionOrder ~ + grid + fastestLapSpeed + round + const_points + const_wins + driver_age + fastestLap_ms + wins, df.train)
 predict_rt = predict(regr_tree, newdata = df.test)
 score_regression(df.test, predict_rt) #47%
+summary(regr_tree)
 
 plot(regr_tree)
 text(regr_tree)
