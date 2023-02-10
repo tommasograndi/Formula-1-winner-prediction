@@ -367,7 +367,7 @@ df.train$name = as.factor(df.train$name)
 str(df.train)
 ```
 
-    ## 'data.frame':    18958 obs. of  25 variables:
+    ## 'data.frame':    18887 obs. of  25 variables:
     ##  $ raceId          : int  10 10 10 10 10 10 10 10 10 10 ...
     ##  $ driverId        : int  1 10 12 13 15 153 16 17 18 2 ...
     ##  $ constructorId   : int  1 7 4 6 7 5 10 9 23 2 ...
@@ -379,13 +379,13 @@ str(df.train)
     ##  $ points          : num  10 3 0 0 1 0 0 6 2 0 ...
     ##  $ laps            : int  70 70 70 0 70 69 1 70 70 70 ...
     ##  $ fastestLapSpeed : num  191 191 189 0 189 ...
-    ##  $ status          : Factor w/ 124 levels "+1 Lap","+10 Laps",..: 63 63 63 124 63 1 92 63 63 63 ...
+    ##  $ status          : Factor w/ 127 levels "+1 Lap","+10 Laps",..: 65 65 65 127 65 1 95 65 65 65 ...
     ##  $ dob             : chr  "1985-01-07" "1982-03-18" "1985-07-25" "1981-04-25" ...
     ##  $ driv_nationality: Factor w/ 41 levels "American","American-Italian",..: 9 19 8 8 24 36 19 5 9 19 ...
-    ##  $ fullname        : Factor w/ 582 levels "Adrián Campos",..: 336 543 400 159 261 257 2 360 274 403 ...
+    ##  $ fullname        : Factor w/ 574 levels "Adrián Campos",..: 332 535 396 155 259 255 2 355 271 399 ...
     ##  $ round           : int  10 10 10 10 10 10 10 10 10 10 ...
     ##  $ date            : chr  "2009-07-26" "2009-07-26" "2009-07-26" "2009-07-26" ...
-    ##  $ const_name      : Factor w/ 156 levels "AGS","Alfa Romeo",..: 101 149 125 51 149 148 55 124 21 13 ...
+    ##  $ const_name      : Factor w/ 156 levels "AGS","Alfa Romeo",..: 101 149 125 52 149 148 56 124 21 13 ...
     ##  $ name            : Factor w/ 70 levels "Adelaide Street Circuit",..: 36 36 36 36 36 36 36 36 36 36 ...
     ##  $ const_points    : num  28 38.5 13 40 38.5 5 0 98.5 114 8 ...
     ##  $ const_wins      : int  1 0 0 0 0 0 0 3 6 0 ...
@@ -403,7 +403,7 @@ df.test$name = as.factor(df.test$name)
 str(df.test)
 ```
 
-    ## 'data.frame':    4735 obs. of  25 variables:
+    ## 'data.frame':    4806 obs. of  25 variables:
     ##  $ raceId          : int  1 1 1 1 1 1 1 1 1 1 ...
     ##  $ driverId        : int  10 15 16 17 18 2 20 21 22 3 ...
     ##  $ constructorId   : int  7 7 10 9 23 2 9 10 23 3 ...
@@ -415,14 +415,14 @@ str(df.test)
     ##  $ points          : num  5 6 0 0 10 0 0 0 8 3 ...
     ##  $ laps            : int  58 58 58 57 58 58 56 58 58 58 ...
     ##  $ fastestLapSpeed : num  216 215 215 216 217 ...
-    ##  $ status          : Factor w/ 94 levels "+1 Lap","+10 Laps",..: 42 42 42 1 42 42 25 42 42 42 ...
+    ##  $ status          : Factor w/ 88 levels "+1 Lap","+10 Laps",..: 40 40 40 1 40 40 23 40 40 40 ...
     ##  $ dob             : chr  "1982-03-18" "1974-07-13" "1983-01-11" "1976-08-27" ...
-    ##  $ driv_nationality: Factor w/ 38 levels "American","Argentine",..: 17 22 17 3 7 17 17 22 6 17 ...
-    ##  $ fullname        : Factor w/ 435 levels "Adrián Campos",..: 408 191 2 269 201 306 383 134 376 308 ...
+    ##  $ driv_nationality: Factor w/ 37 levels "American","Argentine",..: 17 21 17 3 7 17 17 21 6 17 ...
+    ##  $ fullname        : Factor w/ 452 levels "Adrián Campos",..: 422 194 2 274 203 309 396 139 389 311 ...
     ##  $ round           : int  1 1 1 1 1 1 1 1 1 1 ...
     ##  $ date            : chr  "2009-03-29" "2009-03-29" "2009-03-29" "2009-03-29" ...
-    ##  $ const_name      : Factor w/ 126 levels "AGS","Alfa Romeo",..: 119 119 46 98 21 13 98 46 21 124 ...
-    ##  $ name            : Factor w/ 53 levels "Adelaide Street Circuit",..: 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ const_name      : Factor w/ 126 levels "AGS","Alfa Romeo",..: 120 120 46 99 21 13 99 46 21 124 ...
+    ##  $ name            : Factor w/ 53 levels "Adelaide Street Circuit",..: 3 3 3 3 3 3 3 3 3 3 ...
     ##  $ const_points    : num  11 11 0 0 18 0 0 0 18 3 ...
     ##  $ const_wins      : int  0 0 0 0 1 0 0 0 1 0 ...
     ##  $ driver_age      : int  27 35 26 33 29 32 22 36 37 24 ...
@@ -557,25 +557,25 @@ summary(linearmodel)
     ## 
     ## Residuals:
     ##      Min       1Q   Median       3Q      Max 
-    ## -20.1333  -2.9878  -0.0162   2.9543  20.4284 
+    ## -20.0469  -2.9776  -0.0566   2.9487  20.4586 
     ## 
     ## Coefficients:
     ##                   Estimate Std. Error  t value Pr(>|t|)    
-    ## (Intercept)      2.144e+01  1.134e-01  189.012  < 2e-16 ***
-    ## grid             1.072e-01  5.172e-03   20.724  < 2e-16 ***
-    ## laps            -2.214e-01  1.389e-03 -159.395  < 2e-16 ***
-    ## fastestLapSpeed  9.387e-03  1.572e-03    5.970 2.42e-09 ***
-    ## round            1.294e-01  7.620e-03   16.983  < 2e-16 ***
-    ## const_points    -1.540e-02  7.016e-04  -21.957  < 2e-16 ***
-    ## const_wins      -1.082e-01  3.412e-02   -3.171  0.00152 ** 
-    ## fastestLap_ms   -8.892e-06  3.436e-06   -2.588  0.00967 ** 
-    ## wins            -5.422e-01  4.857e-02  -11.163  < 2e-16 ***
+    ## (Intercept)      2.129e+01  1.132e-01  188.108  < 2e-16 ***
+    ## grid             1.162e-01  5.191e-03   22.379  < 2e-16 ***
+    ## laps            -2.199e-01  1.385e-03 -158.813  < 2e-16 ***
+    ## fastestLapSpeed  7.545e-03  1.563e-03    4.828 1.39e-06 ***
+    ## round            1.243e-01  7.414e-03   16.764  < 2e-16 ***
+    ## const_points    -1.471e-02  6.925e-04  -21.247  < 2e-16 ***
+    ## const_wins      -1.503e-01  3.400e-02   -4.420 9.95e-06 ***
+    ## fastestLap_ms   -6.332e-06  3.433e-06   -1.844   0.0652 .  
+    ## wins            -4.552e-01  4.830e-02   -9.425  < 2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 4.645 on 18949 degrees of freedom
-    ## Multiple R-squared:  0.6361, Adjusted R-squared:  0.636 
-    ## F-statistic:  4141 on 8 and 18949 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 4.615 on 18878 degrees of freedom
+    ## Multiple R-squared:  0.6365, Adjusted R-squared:  0.6363 
+    ## F-statistic:  4131 on 8 and 18878 DF,  p-value: < 2.2e-16
 
 ``` r
 avPlots(linearmodel)
@@ -590,7 +590,7 @@ data. Also, the majority of variables are strongly significant.
 ![](README_files/figure-markdown_github/unnamed-chunk-23-1.png)
 
     ##  682 1390 
-    ##  508 1016
+    ##  507 1095
 
 In order to test the significance of the whole model, we should first
 look at the normality of the residuals. From the qqplot presented above,
@@ -608,7 +608,7 @@ predict_lm = predict(linearmodel, df.test)
 score_regression(df.test, predict_lm) 
 ```
 
-    ## [1] 0.6699507
+    ## [1] 0.6896552
 
 <br>
 
@@ -626,7 +626,7 @@ predict_rt = predict(regr_tree, newdata = df.test)
 score_regression(df.test, predict_rt) 
 ```
 
-    ## [1] 0.453202
+    ## [1] 0.4679803
 
 <br> <br>
 
@@ -654,7 +654,7 @@ prediction_nb <- predict(df.nb, newdata = df.test, type = 'raw')
 score_classification(df.test, prediction_nb) 
 ```
 
-    ## [1] 0.4926108
+    ## [1] 0.5517241
 
 <br>
 
@@ -667,7 +667,7 @@ prediction_dt = predict(df.dt, newdata = df.test, method="prob")
 score_classification(df.test, prediction_dt) 
 ```
 
-    ## [1] 0.5960591
+    ## [1] 0.6157635
 
 ``` r
 rpart.plot(df.dt,faclen = 2)
@@ -686,14 +686,14 @@ confirmed by the variable importance section of the rpart object.
 df.dt$variable.importance
 ```
 
-    ##             wins       const_wins             grid             name 
-    ##      389.3038258      164.0184989      163.9032238       64.7047601 
-    ##             laps            round     const_points         driverId 
-    ##       60.6786046       48.8800763       48.1449161       33.6520975 
-    ## driv_nationality           raceId        circuitId    constructorId 
-    ##       28.5609992       12.3946192       12.0500961        8.6979297 
-    ##    fastestLap_ms  fastestLapSpeed       driver_age 
-    ##        4.2786738        3.2324582        0.5094438
+    ##             wins       const_wins             grid             laps 
+    ##      389.3643915      163.7201010      149.6169496       68.1576007 
+    ##     const_points             name            round         driverId 
+    ##       58.8455246       57.8648512       50.6597080       29.0681425 
+    ## driv_nationality        circuitId           raceId  fastestLapSpeed 
+    ##        9.4406771        7.7352196        7.5407942        3.6437450 
+    ##    fastestLap_ms       driver_age    constructorId 
+    ##        2.6035345        0.5297386        0.3405462
 
 Also, we may want to validate the tree by looking at the complexity
 parameters through cross validation.
@@ -709,19 +709,17 @@ printcp(df.dt)
     ##     method = "class")
     ## 
     ## Variables actually used in tree construction:
-    ## [1] driv_nationality grid             laps             name            
-    ## [5] raceId           round            wins            
+    ## [1] grid   laps   name   raceId round  wins  
     ## 
-    ## Root node error: 809/18958 = 0.042673
+    ## Root node error: 809/18887 = 0.042834
     ## 
-    ## n= 18958 
+    ## n= 18887 
     ## 
     ##         CP nsplit rel error  xerror     xstd
-    ## 1 0.031726      0   1.00000 1.00000 0.034400
-    ## 2 0.026576      4   0.83313 0.86897 0.032161
-    ## 3 0.012361      6   0.77998 0.84920 0.031806
-    ## 4 0.010507      8   0.75525 0.88752 0.032489
-    ## 5 0.010000     14   0.68232 0.87639 0.032292
+    ## 1 0.028842      0   1.00000 1.00000 0.034397
+    ## 2 0.014833      6   0.76267 0.88381 0.032421
+    ## 3 0.012979      7   0.74784 0.89370 0.032595
+    ## 4 0.010000      9   0.72188 0.88133 0.032377
 
 And select the number of splits with the lowest error.
 
@@ -741,7 +739,7 @@ prediction_dt_pruned = predict(pruned.df.dt, newdata = df.test, method="prob")
 score_classification(df.test, prediction_dt_pruned) 
 ```
 
-    ## [1] 0.635468
+    ## [1] 0.6157635
 
 <br>
 
@@ -756,7 +754,7 @@ prediction.rf[is.na(prediction.rf)] <- 0
 score_classification(df.test, prediction.rf) 
 ```
 
-    ## [1] 0.6650246
+    ## [1] 0.6453202
 
 <br>
 
