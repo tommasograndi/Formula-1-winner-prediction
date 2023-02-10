@@ -113,5 +113,3 @@ df.results.merged$fastestLap_ms = as.numeric(lubridate::ms(as.character(df.resul
 df.results.merged$fastestLap_ms[is.na(df.results.merged$fastestLap_ms)] <- 0
 df.results.merged = df.results.merged[, -c(11)]  #dropping column of old fastestLapTime 
 ```
-
-Assigning merged dataframe to a new variable called df.
